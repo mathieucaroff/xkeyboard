@@ -1,0 +1,24 @@
+@import "./font.css";
+
+html {
+    font-family: RobotoFont, 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: var(--background-color);
+    color: var(--foreground-color);
+}
+
+h1 {
+    font-family: PrismaFont;
+    font-size: 55px;
+    font-weight: initial;
+    margin: 0;
+}
+
+/* dark theme */
+html {
+    --foreground-color: #000;
+    --background-color: #FFF;
+}
+html.dark {
+    --foreground-color: #FFF;
+    --background-color: #111;
+}

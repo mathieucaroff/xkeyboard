@@ -1,0 +1,23 @@
+{
+  "name": "xkeyboard",
+  "version": "1.0.0",
+  "author": "Mathieu CAROFF <mathieu.caroff@free.fr>",
+  "license": "MIT",
+  "repository": {
+    "url": "https://github.com/mathieucaroff/xkeyboard"
+  },
+  "dependencies": {
+    "antd": "^5.16.0",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20.12.2",
+    "@types/react": "^18.2.73",
+    "@types/react-dom": "^18.2.23",
+    "parcel": "^2.12.0",
+    "prettier": "^3.2.5",
+    "process": "^0.11.10",
+    "typescript": "^5.4.3"
+  }
+}

@@ -1,0 +1,53 @@
+export const symbolTable = {
+  "`": "grave",
+  "!": "exclam",
+  "@": "at",
+  "#": "numbersign",
+  "$": "dollar",
+  "%": "percent",
+  "^": "asciicircum",
+  "&": "ampersand",
+  "*": "asterisk",
+  "(": "parenleft",
+  ")": "parenright",
+  "-": "minus",
+  "=": "equal",
+
+  "~": "asciitilde",
+  "_": "underscore",
+  "+": "plus",
+
+  ";": "semicolon",
+  "[": "bracketleft",
+  "]": "bracketright",
+  "\\": "backslash",
+  ":": "colon",
+  "{": "braceleft",
+  "}": "braceright",
+  "|": "bar",
+
+  "'": "apostrophe",
+  '"': "quotedbl",
+
+  ",": "comma",
+  ".": "period",
+  "/": "slash",
+  "<": "less",
+  ">": "greater",
+  "?": "question",
+
+  " ": "space",
+
+  "²": "square", // TODO: check these symbol names
+  "é": "eacute",
+  "è": "egrave",
+  "ê": "ecircumflex",
+  "à": "agrave",
+  "ù": "ugrave",
+  "ç": "ccedialla",
+  "°": "degree",
+  "¨": "trema",
+  "£": "pound",
+  "µ": "mu",
+  "§": "paragraphsign",
+}
