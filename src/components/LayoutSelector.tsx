@@ -47,14 +47,17 @@ const ASSET2018FULL = [
 \` ! @ # $ % ^ & * ( ) - =
 ³ Ä Œ Ë . ‱ . Ü Ï Ö . . §
 ² ä œ ë £ ‰ . ü ï ö . ° ¤
+
 Q W D G J Y P U L : { } |
 q w d g j y p u l ; [ ] \\
 À Ñ È . . . Ù Ì Ò
 à ñ è . . . ù ì ò . ⟨ ⟩
+
 A S E T F H N I O R "
 a s e t f h n i o r '
 Á ß É € . ― Ú Í Ó . ⸮
 á ß é € . ― ú í ó . ¿
+
 - Z X C V B K M < > ?
 _ z x c v b k m , . /
 — Â Ç Ê . . . Û Î Ô .
@@ -64,13 +67,16 @@ _ z x c v b k m , . /
 ] as const
 
 function parseKeyboardText(text: string) {
-  return text.split("\n").map((line) => {
-    let splitLine = line.split(/\s+/g)
-    if (splitLine[0] === "") {
-      splitLine.shift()
-    }
-    return splitLine
-  })
+  return text
+    .replace(/\n+/g, "\n")
+    .split("\n")
+    .map((line) => {
+      let splitLine = line.split(/\s+/g)
+      if (splitLine[0] === "") {
+        splitLine.shift()
+      }
+      return splitLine
+    })
 }
 
 export interface LayoutSelectorProp {
