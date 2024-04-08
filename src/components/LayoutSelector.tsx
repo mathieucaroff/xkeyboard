@@ -17,7 +17,7 @@ a s d f g h j k l ; '
 ] as const
 const AZERTY = [
   `
-  1 2 3 4 5 6 7 8 9 0 ° +
+. 1 2 3 4 5 6 7 8 9 0 ° +
 ² & é " ' ( - è _ ç à ) =
 A Z E R T Y U I O P ¨ £ µ
 a z e r t y u i o p ^ $ *
@@ -40,6 +40,30 @@ a s e t f h n i o r '
 _ z x c v b k m , . /
 `.slice(1, -1),
   "simple",
+] as const
+const AZERTYFULL = [
+  `
+  1 2 3 4 5 6 7 8 9 0 ° +
+² & é " ' ( - è _ ç à ) =
+.
+. . ~ # { [ | \` \\ ^ @ ] }
+
+A Z E R T Y U I O P ¨ £ µ
+a z e r t y u i o p ^ $ *
+.
+. . € . . . . . . . . ¤
+
+Q S D F G H J K L M %
+q s d f g h j k l m ù
+.
+.
+
+> W X C V B N ? . / §
+< w x c v b n , ; : !
+.
+.
+`.slice(1, -1),
+  "complex",
 ] as const
 const ASSET2018FULL = [
   `
@@ -109,6 +133,7 @@ export function LayoutSelector(prop: LayoutSelectorProp) {
             let [text, complexity] = ({
               QWERTY,
               AZERTY,
+              AZERTYFULL,
               ASSET2018,
               ASSET2018FULL,
               OTHER: [keyboardText, keyboardComplexity],
@@ -126,6 +151,7 @@ export function LayoutSelector(prop: LayoutSelectorProp) {
             { value: "other" },
             { value: "Qwerty" },
             { value: "Azerty" },
+            { value: "AzertyFull" },
             { value: "Asset2018" },
             { value: "Asset2018Full" },
           ]}
@@ -159,7 +185,7 @@ export function LayoutSelector(prop: LayoutSelectorProp) {
           }}
           autoSize={{
             minRows: 8,
-            maxRows: 16,
+            maxRows: 20,
           }}
           style={{
             fontFamily: "monospace",

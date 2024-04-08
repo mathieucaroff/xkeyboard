@@ -18,12 +18,13 @@ export function XConfiguration(props: XConfigurationProp) {
   let { characterTable } = keyboard.layout
   let groupSize = keyboard.layout.complexity === "simple" ? 2 : 4
 
-  let readSymbolGroup = ({ row, column }: Position) => {
-    let group = Array.from({ length: groupSize }, (_, offset) =>
-      getSymbolName(
+  let readCharacterGroup = ({ row, column }: Position) => {
+    let group = Array.from(
+      { length: groupSize },
+      (_, offset) =>
         (characterTable[groupSize * row + offset] ?? [])[column] ?? "",
-      ),
     )
+
     if (keyboard.layout.complexity === "simple") {
       return [group[1], group[0]]
     } else {
@@ -37,16 +38,25 @@ export function XConfiguration(props: XConfigurationProp) {
       return
     }
     let position = { row, column: 0 }
-    let symbolLine = readSymbolGroup(position)
-    trimEmptyStringsFromArrayEnd(symbolLine)
-    while (symbolLine.length > 0) {
+    let characterGroup = readCharacterGroup(position)
+    trimEmptyStringsFromArrayEnd(characterGroup)
+    while (characterGroup.length > 0) {
       let keyName = getKeyName(position)
-      configurationLineArray.push(
-        `  key <${keyName}> { [ ${symbolLine.join(", ")} ] };`,
-      )
+      let line = `  key <${keyName}> { [ ${characterGroup.map((character) => getSymbolName(character)).join(", ")} ] };`
+      if (
+        characterGroup.some(
+          (c) =>
+            (c < "0" || c > "9") &&
+            (c < "A" || c > "Z") &&
+            (c < "a" || c > "z"),
+        )
+      ) {
+        line += ` // ${characterGroup.join(" ")}`
+      }
+      configurationLineArray.push(line)
       position.column++
-      symbolLine = readSymbolGroup(position)
-      trimEmptyStringsFromArrayEnd(symbolLine)
+      characterGroup = readCharacterGroup(position)
+      trimEmptyStringsFromArrayEnd(characterGroup)
     }
     configurationLineArray.push("")
   })
