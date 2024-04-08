@@ -1,7 +1,7 @@
 import React from "react"
 import { Keyboard, Position } from "../type"
 import { getKeyName } from "../getKeyName"
-import { getSymbol } from "../symbol/getSymbol"
+import { getSymbolName } from "../symbol/symbolTable"
 
 function trimEmptyStringsFromArrayEnd(array: string[]) {
   while (array[array.length - 1] === "") {
@@ -20,7 +20,9 @@ export function XConfiguration(props: XConfigurationProp) {
 
   let readSymbolGroup = ({ row, column }: Position) => {
     let group = Array.from({ length: groupSize }, (_, offset) =>
-      getSymbol((characterTable[groupSize * row + offset] ?? [])[column] ?? ""),
+      getSymbolName(
+        (characterTable[groupSize * row + offset] ?? [])[column] ?? "",
+      ),
     )
     if (keyboard.layout.complexity === "simple") {
       return [group[1], group[0]]

@@ -1,53 +1,27 @@
-export const symbolTable = {
-  "`": "grave",
-  "!": "exclam",
-  "@": "at",
-  "#": "numbersign",
-  "$": "dollar",
-  "%": "percent",
-  "^": "asciicircum",
-  "&": "ampersand",
-  "*": "asterisk",
-  "(": "parenleft",
-  ")": "parenright",
-  "-": "minus",
-  "=": "equal",
+import keysymdef from "bundle-text:../../asset/x11/keysymdef.h"
 
-  "~": "asciitilde",
-  "_": "underscore",
-  "+": "plus",
+const symbolNameTable: string[] = []
+const symbolNameUnicodeTable: string[] = {} as any
 
-  ";": "semicolon",
-  "[": "bracketleft",
-  "]": "bracketright",
-  "\\": "backslash",
-  ":": "colon",
-  "{": "braceleft",
-  "}": "braceright",
-  "|": "bar",
+keysymdef.split("\n").forEach((line) => {
+  const match = line.match(/^#define XK_(\w+)\s+(\w+)(\s+\/\* U\+(\w+))?/)
+  if (match) {
+    const name = match[1]
+    const code = Number(match[2])
+    const unicodeCode = Number("0x" + match[4])
+    symbolNameTable[code] = name
+    symbolNameUnicodeTable[unicodeCode] = name
+  }
+})
 
-  "'": "apostrophe",
-  '"': "quotedbl",
-
-  ",": "comma",
-  ".": "period",
-  "/": "slash",
-  "<": "less",
-  ">": "greater",
-  "?": "question",
-
-  " ": "space",
-
-  "²": "square", // TODO: check these symbol names
-  "é": "eacute",
-  "è": "egrave",
-  "ê": "ecircumflex",
-  "à": "agrave",
-  "ù": "ugrave",
-  "ç": "ccedialla",
-  "°": "degree",
-  "¨": "trema",
-  "£": "pound",
-  "µ": "mu",
-  "§": "paragraphsign",
+export function getSymbolName(symbol: string) {
+  if (!symbol) {
+    return ""
+  }
+  let code = symbol.charCodeAt(0)
+  let name =
+    symbolNameTable[code] ??
+    symbolNameUnicodeTable[code] ??
+    `U${code.toString(16)}`
+  return name
 }

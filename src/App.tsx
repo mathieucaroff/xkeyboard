@@ -1,23 +1,16 @@
 import React, { useState } from "react"
 import { XConfiguration } from "./components/XConfiguration"
 import { LayoutSelector } from "./components/LayoutSelector"
-import { KeyboardKind } from "./type"
+import { KeyboardKind, KeyboardLayout } from "./type"
 import { Input } from "antd"
-
-export function parseKeyboardText(text: string) {
-  return text.split("\n").map((line) => {
-    let splitLine = line.split(/\s+/g)
-    if (splitLine[0] === "") {
-      splitLine.shift()
-    }
-    return splitLine
-  })
-}
 
 export function App() {
   let [keyboardName, setKeyboardName] = useState("")
   let [keyboardGroupName, setKeyboardGroupName] = useState("")
-  let [keyboardText, setKeyboardText] = useState("")
+  let [keyboardLayout, setKeyboardLayout] = useState<KeyboardLayout>(() => ({
+    complexity: "simple",
+    characterTable: [],
+  }))
   let [keyboardKind, setKeyboardKind] = useState<KeyboardKind>("Basic")
   let [hasNavigationPad, setHasNavigationPad] = useState(false)
   let [hasNumpad, setHasNumpad] = useState(false)
@@ -46,8 +39,7 @@ export function App() {
       />
       <LayoutSelector
         {...{
-          keyboardText,
-          setKeyboardText,
+          setKeyboardLayout,
           keyboardKind,
           setKeyboardKind,
           hasNavigationPad,
@@ -61,10 +53,7 @@ export function App() {
           kind: keyboardKind,
           name: keyboardName,
           groupName: keyboardGroupName,
-          layout: {
-            complexity: "simple",
-            characterTable: parseKeyboardText(keyboardText),
-          },
+          layout: keyboardLayout,
           hasNavigationPad,
           hasNumpad,
         }}

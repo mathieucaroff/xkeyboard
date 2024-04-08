@@ -1,5 +1,5 @@
 import { createElement } from "react"
-import { createRoot } from "react-dom"
+import { createRoot } from "react-dom/client"
 
 import * as packageInfo from "../package.json"
 import { App } from "./App"
@@ -15,7 +15,7 @@ function main() {
   )
   document.body.appendChild(cornerDiv)
 
-  let root = createRoot(document.body.querySelector("#app"))
+  let root = createRoot(document.body.querySelector("#app")!)
   root.render(createElement(App))
 }
 
