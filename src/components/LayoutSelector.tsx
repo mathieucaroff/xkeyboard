@@ -84,8 +84,8 @@ a s e t f h n i o r '
 
 - Z X C V B K M < > ?
 _ z x c v b k m , . /
-— Â Ç Ê . . . Û Î Ô .
-– â ç ê . . . û î ô .
+— Â Ç Ê . . . Û Î Ô
+– â ç ê . . . û î ô
 `.slice(1, -1),
   "complex",
 ] as const
@@ -159,6 +159,7 @@ export function LayoutSelector(prop: LayoutSelectorProp) {
         <Select
           onChange={(complexity: Complexity) => {
             setKeyboardComplexity(complexity)
+            setKeyboardSelectValue("other")
           }}
           value={keyboardComplexity}
           style={{ width: 300 }}

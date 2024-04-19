@@ -6,7 +6,11 @@ export function getKeyName(position: Position) {
     if (column === 0) {
       return "TLDE"
     }
-  } else {
+  } else if (row === 3) {
+    if (column === 0) {
+      return "LSGT"
+    }
+  }else {
     column += 1
   }
   if (row === 1 && column === 13) {

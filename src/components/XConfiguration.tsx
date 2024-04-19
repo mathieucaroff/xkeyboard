@@ -61,7 +61,11 @@ export function XConfiguration(props: XConfigurationProp) {
     configurationLineArray.push("")
   })
 
-  configurationLineArray.pop()
+  if (keyboard.layout.complexity === "complex") {
+    configurationLineArray.push('  include "level3(ralt_switch)"')
+  } else {
+    configurationLineArray.pop()
+  }
 
   return (
     <pre>
