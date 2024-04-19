@@ -22,3 +22,17 @@ html.dark {
     --foreground-color: #FFF;
     --background-color: #111;
 }
+
+.useful-command-list li pre {
+    margin: 0;
+    padding: 0;
+}
+
+.useful-command-list {
+    margin: 0;
+    padding-top: 0;
+}
+
+.title {
+    margin-top: 12px;
+}

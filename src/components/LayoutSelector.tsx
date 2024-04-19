@@ -123,7 +123,7 @@ export function LayoutSelector(prop: LayoutSelectorProp) {
 
   return (
     <>
-      <div>Keyboard Layout</div>
+      <div className="title">Keyboard Layout</div>
       <div>
         <Select
           onChange={(value) => {
@@ -162,10 +162,17 @@ export function LayoutSelector(prop: LayoutSelectorProp) {
             setKeyboardSelectValue("other")
           }}
           value={keyboardComplexity}
-          style={{ width: 300 }}
+          style={{ width: 400 }}
           options={[
-            { label: "simple (groups of two lines)", value: "simple" },
-            { label: "complex (groups of four lines)", value: "complex" },
+            {
+              label: "simple (upper and lower: groups of two lines)",
+              value: "simple",
+            },
+            {
+              label:
+                "complex (upper, lower and alt.groups: groups of four lines)",
+              value: "complex",
+            },
           ]}
         />
         <Select

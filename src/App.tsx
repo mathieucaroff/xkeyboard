@@ -17,7 +17,7 @@ export function App() {
 
   return (
     <>
-      <div>Keyboard name</div>
+      <div className="title">Keyboard name</div>
       <Input
         value={keyboardName}
         onChange={(ev) => {
@@ -27,7 +27,22 @@ export function App() {
           width: 300,
         }}
       />
-      <div>Group name</div>
+      <div className="title">Useful commands:</div>
+      <ul className="useful-command-list">
+        <li>
+          <pre>vim /usr/share/X11/xkb/symbols/us</pre>
+        </li>
+        <li>
+          <pre>setxkbmap -print -verbose 10</pre>
+        </li>
+        <li>
+          <pre>{`setxkbmap us ${keyboardName}`}</pre>
+        </li>
+        <li>
+          <pre>{`gsettings set org.gnome.desktop.input-sources sources "[('xkb', 'us+${keyboardName}')]"`}</pre>
+        </li>
+      </ul>
+      <div className="title">Group name</div>
       <Input
         value={keyboardGroupName}
         onChange={(ev) => {
