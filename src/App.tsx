@@ -1,8 +1,9 @@
 import React, { useState } from "react"
 import { XConfiguration } from "./components/XConfiguration"
 import { LayoutSelector } from "./components/LayoutSelector"
-import { KeyboardKind, KeyboardLayout } from "./type"
+import { Keyboard, KeyboardKind, KeyboardLayout } from "./type"
 import { Input } from "antd"
+import { KeyboardView } from "./components/KeyboardView"
 
 export function App() {
   let [keyboardName, setKeyboardName] = useState("")
@@ -14,6 +15,15 @@ export function App() {
   let [keyboardKind, setKeyboardKind] = useState<KeyboardKind>("Basic")
   let [hasNavigationPad, setHasNavigationPad] = useState(false)
   let [hasNumpad, setHasNumpad] = useState(false)
+
+  let keyboard: Keyboard = {
+    kind: keyboardKind,
+    name: keyboardName,
+    groupName: keyboardGroupName,
+    layout: keyboardLayout,
+    hasNavigationPad,
+    hasNumpad,
+  }
 
   return (
     <>
@@ -63,16 +73,8 @@ export function App() {
           setHasNumpad,
         }}
       />
-      <XConfiguration
-        keyboard={{
-          kind: keyboardKind,
-          name: keyboardName,
-          groupName: keyboardGroupName,
-          layout: keyboardLayout,
-          hasNavigationPad,
-          hasNumpad,
-        }}
-      />
+      <KeyboardView keyboard={keyboard} />
+      <XConfiguration keyboard={keyboard} />
     </>
   )
 }

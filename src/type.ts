@@ -11,7 +11,7 @@ export interface Keyboard {
 
 export interface KeyboardLayout {
   complexity: Complexity
-  characterTable: Symbol[][]
+  characterTable: Symbol[][][]
 }
 
 export type KeyboardKind = "Basic" | "TypeMatrix"

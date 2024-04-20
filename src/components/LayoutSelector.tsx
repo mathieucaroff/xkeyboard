@@ -1,5 +1,5 @@
 import React, { Dispatch, SetStateAction, useState } from "react"
-import { Complexity, KeyboardKind, KeyboardLayout } from "../type"
+import { Complexity, KeyboardKind, KeyboardLayout, Position } from "../type"
 import { Input, Select } from "antd"
 
 const QWERTY = [
@@ -90,8 +90,10 @@ _ z x c v b k m , . /
   "complex",
 ] as const
 
-function parseKeyboardText(text: string) {
-  return text
+function parseKeyboardText(text: string, complexity: Complexity) {
+  let groupSize = complexity === "simple" ? 2 : 4
+
+  let table = text
     .replace(/\n+/g, "\n")
     .split("\n")
     .map((line) => {
@@ -101,6 +103,42 @@ function parseKeyboardText(text: string) {
       }
       return splitLine
     })
+
+  let readCharacterGroup = ({ row, column }: Position) => {
+    let group = Array.from(
+      { length: groupSize },
+      (_, offset) => (table[groupSize * row + offset] ?? [])[column] ?? "",
+    )
+
+    if (complexity === "simple") {
+      return [group[1], group[0]]
+    } else {
+      return [group[1], group[0], group[3], group[2]]
+    }
+  }
+  Array.from({ length: 5 }, (_, row) => {
+    if (groupSize * (row + 1) > table.length) {
+      return
+    }
+  })
+
+  let characterTable: string[][][] = []
+  Array.from({ length: 5 }, (_, row) => {
+    if (groupSize * (row + 1) > table.length) {
+      return
+    }
+    let position = { row, column: 0 }
+    let characterGroup = readCharacterGroup(position)
+    let characterRow: string[][] = []
+    while (characterGroup.some((c) => c !== "")) {
+      characterRow.push(characterGroup)
+      position.column++
+      characterGroup = readCharacterGroup(position)
+    }
+    characterTable.push(characterRow)
+  })
+
+  return characterTable
 }
 
 export interface LayoutSelectorProp {
@@ -142,7 +180,7 @@ export function LayoutSelector(prop: LayoutSelectorProp) {
             setKeyboardComplexity(complexity)
             setKeyboardLayout({
               complexity,
-              characterTable: parseKeyboardText(text),
+              characterTable: parseKeyboardText(text, complexity),
             })
           }}
           value={keyboardSelectValue}
@@ -188,8 +226,13 @@ export function LayoutSelector(prop: LayoutSelectorProp) {
         <Input.TextArea
           value={keyboardText}
           onChange={(ev) => {
-            setKeyboardText(ev.currentTarget.value)
+            let text = ev.currentTarget.value
+            setKeyboardText(text)
             setKeyboardSelectValue("other")
+            setKeyboardLayout({
+              complexity: keyboardComplexity,
+              characterTable: parseKeyboardText(text, keyboardComplexity),
+            })
           }}
           autoSize={{
             minRows: 8,
