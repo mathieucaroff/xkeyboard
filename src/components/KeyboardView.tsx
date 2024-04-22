@@ -9,7 +9,7 @@ export interface KeyboardViewProp {
 
 export function KeyboardView(prop: KeyboardViewProp) {
   let { keyboard } = prop
-  let { kind, layout } = keyboard
+  let { kind, layout, hasLSGT } = keyboard
 
   return (
     <div className="keyboard">
@@ -19,7 +19,7 @@ export function KeyboardView(prop: KeyboardViewProp) {
             <tr>
               {k !== 0 ? (
                 <td
-                  className={`keyboard__key keyboard__miniText keyboard__offset--${kind}--${k}`}
+                  className={`keyboard__key keyboard__miniText keyboard__offset--${kind}--${k} keyboard__offset--${hasLSGT}`}
                 >
                   {kind === "TypeMatrix"
                     ? { [0]: "del", [1]: "tab", [2]: "shift", [3]: null }[k]
@@ -28,16 +28,17 @@ export function KeyboardView(prop: KeyboardViewProp) {
               ) : null}
               {row.map((group, m) => (
                 <>
-                  {kind === "TypeMatrix" && m - Number(k === 2) === 5 ? (
+                  {kind === "TypeMatrix" &&
+                  [m === 6, m === 5, m === 5, m === 5][k] ? (
                     <td
                       className={`keyboard__key keyboard__miniText keyboard__centralKey--${kind}--${k}`}
                     >
                       {{ [0]: "del", [1]: "bksp", [2]: "enter", [3]: null }[k]}
                     </td>
                   ) : null}
-                  {kind === "TypeMatrix" && k === 2 && m === 0 ? null : (
+                  {
                     <td
-                      className={`keyboard__key keyboard__key--${m}--${k}`}
+                      className={`keyboard__key keyboard__key--${kind}--${m}--${k}`}
                       key={m}
                     >
                       <div>
@@ -53,7 +54,7 @@ export function KeyboardView(prop: KeyboardViewProp) {
                         </span>
                       </div>
                     </td>
-                  )}
+                  }
                 </>
               ))}
             </tr>

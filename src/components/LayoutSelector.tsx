@@ -1,8 +1,20 @@
 import React, { Dispatch, SetStateAction, useState } from "react"
-import { Complexity, KeyboardKind, KeyboardLayout, Position } from "../type"
-import { Input, Select } from "antd"
+import {
+  Complexity,
+  HasLSGT,
+  HasNavigationPad,
+  HasNumpad,
+  KeyboardKind,
+  KeyboardLayout,
+  Position,
+} from "../type"
+import { Checkbox, Input, Select } from "antd"
+import { text } from "stream/consumers"
+import { parse } from "path"
 
 const QWERTY = [
+  "qwerty",
+  "Qwerty",
   `
 ~ ! @ # $ % ^ & * ( ) _ +
 \` 1 2 3 4 5 6 7 8 9 0 - =
@@ -10,12 +22,15 @@ Q W E R T Y U I O P { } |
 q w e r t y u i o p [ ] \\
 A S D F G H J K L : "
 a s d f g h j k l ; '
-| Z X C V B N M < > ?
-\\ z x c v b n m , . /
+Z X C V B N M < > ?
+z x c v b n m , . /
 `.slice(1, -1),
   "simple",
+  "noLSGT",
 ] as const
 const AZERTY = [
+  "azerty_short",
+  "Azerty short",
   `
 . 1 2 3 4 5 6 7 8 9 0 ° +
 ² & é " ' ( - è _ ç à ) =
@@ -27,8 +42,11 @@ q s d f g h j k l m ù
 < w x c v b n , ; : !
 `.slice(1, -1),
   "simple",
+  "LSGT",
 ] as const
 const ASSET2018 = [
+  "asset2018_short",
+  "Asset 2018 short",
   `
 ~ 1 2 3 4 5 6 7 8 9 0 _ +
 \` ! @ # $ % ^ & * ( ) - =
@@ -40,8 +58,11 @@ a s e t f h n i o r '
 _ z x c v b k m , . /
 `.slice(1, -1),
   "simple",
+  "LSGT",
 ] as const
 const AZERTYFULL = [
+  "azerty",
+  "Azerty",
   `
   1 2 3 4 5 6 7 8 9 0 ° +
 ² & é " ' ( - è _ ç à ) =
@@ -64,8 +85,11 @@ q s d f g h j k l m ù
 .
 `.slice(1, -1),
   "complex",
+  "LSGT",
 ] as const
 const ASSET2018FULL = [
+  "asset2018",
+  "Asset 2018",
   `
 ~ 1 2 3 4 5 6 7 8 9 0 _ +
 \` ! @ # $ % ^ & * ( ) - =
@@ -88,6 +112,7 @@ _ z x c v b k m , . /
 – â ç ê . . . û î ô
 `.slice(1, -1),
   "complex",
+  "LSGT",
 ] as const
 
 function parseKeyboardText(text: string, complexity: Complexity) {
@@ -141,18 +166,48 @@ function parseKeyboardText(text: string, complexity: Complexity) {
   return characterTable
 }
 
+function removeLSGT(text: string, complexity: Complexity) {
+  let emptyLineCount = 0
+  let lineArray = text.split("\n")
+  lineArray.forEach((line, k) => {
+    if (line.length === 0) {
+      emptyLineCount += 1
+    }
+    if (k - emptyLineCount >= (complexity === "simple" ? 6 : 12)) {
+      lineArray[k] = line.replace(/\s*\S+\s+(\S)/, "$1")
+    }
+  })
+  return lineArray.join("\n")
+}
+
 export interface LayoutSelectorProp {
+  keyboardName: string
+  setKeyboardName: Dispatch<SetStateAction<string>>
+  keyboardLongName: string
+  setKeyboardLongName: Dispatch<SetStateAction<string>>
   setKeyboardLayout: Dispatch<SetStateAction<KeyboardLayout>>
   keyboardKind: KeyboardKind
   setKeyboardKind: Dispatch<SetStateAction<KeyboardKind>>
-  hasNavigationPad: boolean
-  setHasNavigationPad: Dispatch<SetStateAction<boolean>>
-  hasNumpad: boolean
-  setHasNumpad: Dispatch<SetStateAction<boolean>>
+  hasLSGT: HasLSGT
+  setHasLSGT: Dispatch<SetStateAction<HasLSGT>>
+  hasNavigationPad: HasNavigationPad
+  setHasNavigationPad: Dispatch<SetStateAction<HasNavigationPad>>
+  hasNumpad: HasNumpad
+  setHasNumpad: Dispatch<SetStateAction<HasNumpad>>
 }
 
 export function LayoutSelector(prop: LayoutSelectorProp) {
-  let { setKeyboardLayout, keyboardKind, setKeyboardKind } = prop
+  let {
+    setKeyboardLayout,
+    keyboardKind,
+    setKeyboardKind,
+    keyboardName,
+    setKeyboardName,
+    keyboardLongName,
+    setKeyboardLongName,
+    hasLSGT,
+    setHasLSGT,
+  } = prop
 
   let [keyboardText, setKeyboardText] = useState("")
   let [keyboardComplexity, setKeyboardComplexity] =
@@ -167,24 +222,43 @@ export function LayoutSelector(prop: LayoutSelectorProp) {
           onChange={(value) => {
             setKeyboardSelectValue(value)
 
-            let name = value.toUpperCase()
-            let [text, complexity] = ({
+            let selection = value.toUpperCase()
+            let [name, longName, text, complexity, keyboardHasLSGT] = ({
               QWERTY,
               AZERTY,
               AZERTYFULL,
               ASSET2018,
               ASSET2018FULL,
-              OTHER: [keyboardText, keyboardComplexity],
-            }[name] ?? ["", "simple"]) as [string, Complexity]
-            setKeyboardText(text)
+              OTHER: [
+                keyboardName,
+                keyboardLongName,
+                keyboardText,
+                keyboardComplexity,
+                keyboardKind,
+              ],
+            }[selection] ?? ["", "", "", "simple", "LSGT"]) as [
+              string,
+              string,
+              string,
+              Complexity,
+              HasLSGT,
+            ]
+            setKeyboardName(name)
+            setKeyboardLongName(longName)
             setKeyboardComplexity(complexity)
+            if (keyboardKind === "TypeMatrix" && keyboardHasLSGT === "LSGT") {
+              text = removeLSGT(text, complexity)
+              keyboardHasLSGT = "noLSGT"
+            }
+            setHasLSGT(keyboardHasLSGT)
+            setKeyboardText(text)
             setKeyboardLayout({
               complexity,
               characterTable: parseKeyboardText(text, complexity),
             })
           }}
           value={keyboardSelectValue}
-          style={{ width: 200 }}
+          style={{ width: 150 }}
           options={[
             { value: "other" },
             { value: "Qwerty" },
@@ -216,11 +290,36 @@ export function LayoutSelector(prop: LayoutSelectorProp) {
         <Select
           onChange={(name: KeyboardKind) => {
             setKeyboardKind(name)
+            if (name === "TypeMatrix") {
+              if (hasLSGT === "LSGT") {
+                let newText = removeLSGT(keyboardText, keyboardComplexity)
+                setKeyboardText(newText)
+                setKeyboardLayout({
+                  complexity: keyboardComplexity,
+                  characterTable: parseKeyboardText(
+                    newText,
+                    keyboardComplexity,
+                  ),
+                })
+              }
+              setHasLSGT("noLSGT")
+            }
           }}
           value={keyboardKind}
-          style={{ width: 200 }}
+          style={{ width: 110 }}
           options={[{ value: "Basic" }, { value: "TypeMatrix" }]}
         />
+      </div>
+      <div>
+        <Checkbox
+          checked={hasLSGT === "LSGT"}
+          disabled={keyboardKind === "TypeMatrix"}
+          onChange={(ev) => {
+            setHasLSGT(ev.target.checked ? "LSGT" : "noLSGT")
+          }}
+        >
+          Has LSGT key
+        </Checkbox>
       </div>
       <div>
         <Input.TextArea

@@ -1,12 +1,12 @@
-import { Position } from "./type"
+import { HasLSGT, Position } from "./type"
 
-export function getKeyName(position: Position) {
+export function getKeyName(position: Position, hasLSGT: HasLSGT) {
   let { row, column } = position
   if (row === 0) {
     if (column === 0) {
       return "TLDE"
     }
-  } else if (row === 3) {
+  } else if (row === 3 && hasLSGT === 'LSGT') {
     if (column === 0) {
       return "LSGT"
     }

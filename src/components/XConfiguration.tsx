@@ -1,5 +1,5 @@
 import React from "react"
-import { Keyboard, Position } from "../type"
+import { Keyboard } from "../type"
 import { getKeyName } from "../getKeyName"
 import { getSymbolName } from "../symbol/symbolTable"
 
@@ -26,7 +26,10 @@ export function XConfiguration(props: XConfigurationProp) {
     let characterGroup = characterTable[row][position.column] ?? []
     trimEmptyStringsFromArrayEnd(characterGroup)
     while (characterGroup.length > 0) {
-      let keyName = getKeyName(position)
+      let keyName = getKeyName(
+        position,
+        keyboard.kind === "Basic" ? keyboard.hasLSGT : "noLSGT",
+      )
       let line = `  key <${keyName}> { [ ${characterGroup.map((character) => getSymbolName(character)).join(", ")} ] };`
       if (
         characterGroup.some(

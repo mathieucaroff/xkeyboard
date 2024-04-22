@@ -16,9 +16,11 @@
 
 .keyboard__offset--Basic--1 { width: 52px; }
 .keyboard__offset--Basic--2 { width: 68px; }
-.keyboard__offset--Basic--3 { width: 40px; }
+.keyboard__offset--Basic--3.keyboard__offset--noLSGT { width: 83px; }
+.keyboard__offset--Basic--3.keyboard__offset--LSGT { width: 40px; }
 
-.keyboard__key--0--0 { width: 30px; }
+.keyboard__key--Basic--0--0 { width: 32px; max-width: 32px; }
+.keyboard__key--TypeMatrix--0--0 { width: 40px; }
 
 .keyboard__offset--TypeMatrix--0 { width: 40px; max-width: 40px; }
 .keyboard__offset--TypeMatrix--1 { width: 40px; max-width: 40px; }
