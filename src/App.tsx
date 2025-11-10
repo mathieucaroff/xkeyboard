@@ -1,14 +1,6 @@
 import React, { useState } from "react"
 import { XConfiguration } from "./components/XConfiguration"
 import { LayoutSelector } from "./components/LayoutSelector"
-import {
-  HasLSGT,
-  HasNavigationPad,
-  HasNumpad,
-  Keyboard,
-  KeyboardKind,
-  KeyboardLayout,
-} from "./type"
 import { Input } from "antd"
 import { KeyboardView } from "./components/KeyboardView"
 

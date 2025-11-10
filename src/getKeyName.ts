@@ -1,5 +1,3 @@
-import { HasLSGT, Position } from "./type"
-
 export function getKeyName(position: Position, hasLSGT: HasLSGT) {
   let { row, column } = position
   if (row === 0) {

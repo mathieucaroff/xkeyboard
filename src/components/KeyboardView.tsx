@@ -1,6 +1,4 @@
-import classNames from "classnames"
 import React from "react"
-import { Keyboard } from "../type"
 import "./keyboardView.css"
 
 export interface KeyboardViewProp {

@@ -1,5 +1,3 @@
-import React from "react"
-import { Keyboard } from "../type"
 import { getKeyName } from "../getKeyName"
 import { getSymbolName } from "../symbol/symbolTable"
 
