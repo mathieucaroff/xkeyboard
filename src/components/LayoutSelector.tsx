@@ -33,9 +33,9 @@ q s d f g h j k l m ù
   "simple",
   "LSGT",
 ] as const
-const ASSET2018 = [
-  "asset2018_short",
-  "Asset 2018 short",
+const ASSET2025 = [
+  "asset2025_short",
+  "Asset 2025 short",
   `
 ~ 1 2 3 4 5 6 7 8 9 0 _ +
 \` ! @ # $ % ^ & * ( ) - =
@@ -76,9 +76,9 @@ q s d f g h j k l m ù
   "complex",
   "LSGT",
 ] as const
-const ASSET2018FULL = [
-  "asset2018",
-  "Asset 2018",
+const ASSET2025FULL = [
+  "asset2025",
+  "Asset 2025",
   `
 ~ 1 2 3 4 5 6 7 8 9 0 _ +
 \` ! @ # $ % ^ & * ( ) - =
@@ -107,32 +107,29 @@ _ z x c v b k m , : / :.
 function parseKeyboardText(text: string, complexity: Complexity) {
   let groupSize = complexity === "simple" ? 2 : 4
 
-  let table = text
-    .replace(/\n+/g, "\n")
-    .split("\n")
-    .map((line) => {
-      let splitLine = line.split(/\s+/g)
-      if (splitLine[0] === "") {
-        splitLine.shift()
+  let table = text.split(/\n+/g).map((line) => {
+    let splitLine = line.split(/\s+/g)
+    if (splitLine[0] === "") {
+      splitLine.shift()
+    }
+
+    const replacementArray: string[] = []
+    const row: string[] = []
+
+    for (const c of splitLine) {
+      ;(c.match(/^:.+/) ? replacementArray : row).push(c)
+    }
+
+    let replacementIndex = 0
+    for (let i = 0; i < row.length; i++) {
+      if (row[i] === ":" && replacementArray[replacementIndex]) {
+        row[i] = replacementArray[replacementIndex]!
+        replacementIndex++
       }
+    }
 
-      const replacementArray: string[] = []
-      const row: string[] = []
-
-      for (const c of splitLine) {
-        ;(c.match(/^:.+/) ? replacementArray : row).push(c)
-      }
-
-      let replacementIndex = 0
-      for (let i = 0; i < row.length; i++) {
-        if (row[i] === ":" && replacementArray[replacementIndex]) {
-          row[i] = replacementArray[replacementIndex]!
-          replacementIndex++
-        }
-      }
-
-      return row
-    })
+    return row
+  })
 
   let readCharacterGroup = ({ row, column }: Position): string[] => {
     let group = Array.from({ length: groupSize }, (_, offset) =>
@@ -234,8 +231,8 @@ export function LayoutSelector(prop: LayoutSelectorProp) {
               QWERTY,
               AZERTY,
               AZERTYFULL,
-              ASSET2018,
-              ASSET2018FULL,
+              ASSET2025,
+              ASSET2025FULL,
               OTHER: [
                 keyboardName,
                 keyboardLongName,
@@ -271,8 +268,8 @@ export function LayoutSelector(prop: LayoutSelectorProp) {
             { value: "Qwerty" },
             { value: "Azerty" },
             { value: "AzertyFull" },
-            { value: "Asset2018" },
-            { value: "Asset2018Full" },
+            { value: "Asset2025" },
+            { value: "Asset2025Full" },
           ]}
         />
         <Select

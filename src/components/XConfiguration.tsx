@@ -21,7 +21,7 @@ export function XConfiguration(props: XConfigurationProp) {
       return
     }
     let position = { row, column: 0 }
-    let characterGroup = characterTable[row][position.column] ?? []
+    let characterGroup = characterTable[row]![position.column] ?? []
     trimEmptyStringsFromArrayEnd(characterGroup)
     while (characterGroup.length > 0) {
       let keyName = getKeyName(
@@ -41,7 +41,7 @@ export function XConfiguration(props: XConfigurationProp) {
       }
       configurationLineArray.push(line)
       position.column++
-      characterGroup = characterTable[row][position.column] ?? []
+      characterGroup = characterTable[row]![position.column] ?? []
       trimEmptyStringsFromArrayEnd(characterGroup)
     }
     configurationLineArray.push("")
@@ -54,8 +54,24 @@ export function XConfiguration(props: XConfigurationProp) {
   }
 
   return (
-    <pre>
-      {`
+    <div>
+      <div className="title">Useful commands:</div>
+      <ul className="useful-command-list">
+        <li>
+          <pre>vim /usr/share/X11/xkb/symbols/us</pre>
+        </li>
+        <li>
+          <pre>setxkbmap -print -verbose 10</pre>
+        </li>
+        <li>
+          <pre>{`setxkbmap us ${keyboard.name}`}</pre>
+        </li>
+        <li>
+          <pre>{`gsettings set org.gnome.desktop.input-sources sources "[('xkb', 'us+${keyboard.name}')]"`}</pre>
+        </li>
+      </ul>
+      <pre>
+        {`
 default partial alphanumeric_keys modifier_keys
 
 xkb_symbols "${keyboard.name}" {
@@ -64,6 +80,7 @@ xkb_symbols "${keyboard.name}" {
 ${configurationLineArray.join("\n")}
 };
 `.slice(1, -1)}
-    </pre>
+      </pre>
+    </div>
   )
 }

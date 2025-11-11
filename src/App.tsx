@@ -1,9 +1,11 @@
-import React, { useState } from "react"
+import { useState } from "react"
 import { XConfiguration } from "./components/XConfiguration"
 import { MacOSConfiguration } from "./components/MacOSConfiguration"
 import { LayoutSelector } from "./components/LayoutSelector"
-import { Input } from "antd"
+import { Collapse, Input } from "antd"
 import { KeyboardView } from "./components/KeyboardView"
+
+const CollapsePanel = Collapse.Panel
 
 export function App() {
   let [keyboardName, setKeyboardName] = useState("")
@@ -58,21 +60,6 @@ export function App() {
           width: 300,
         }}
       />
-      <div className="title">Useful commands:</div>
-      <ul className="useful-command-list">
-        <li>
-          <pre>vim /usr/share/X11/xkb/symbols/us</pre>
-        </li>
-        <li>
-          <pre>setxkbmap -print -verbose 10</pre>
-        </li>
-        <li>
-          <pre>{`setxkbmap us ${keyboardName}`}</pre>
-        </li>
-        <li>
-          <pre>{`gsettings set org.gnome.desktop.input-sources sources "[('xkb', 'us+${keyboardName}')]"`}</pre>
-        </li>
-      </ul>
       <div className="title">Long layout name</div>
       <Input
         value={keyboardLongName}
@@ -83,10 +70,14 @@ export function App() {
           width: 300,
         }}
       />
-      <h3 className="title">Linux X11 Configuration</h3>
-      <XConfiguration keyboard={keyboard} />
-      <h3 className="title">macOS Configuration</h3>
-      <MacOSConfiguration keyboard={keyboard} />
+      <Collapse defaultActiveKey={["Linux"]} accordion>
+        <CollapsePanel header="Linux X11 Configuration" key="Linux">
+          <XConfiguration keyboard={keyboard} />
+        </CollapsePanel>
+        <CollapsePanel header="MacOS Configuration" key="MacOS">
+          <MacOSConfiguration keyboard={keyboard} />
+        </CollapsePanel>
+      </Collapse>
     </>
   )
 }

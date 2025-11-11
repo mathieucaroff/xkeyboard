@@ -29,19 +29,17 @@ export function getMacOSKeyCode(
   let { row, column } = position
 
   // Handle special cases first
-  if (row === 0 && column === 0) {
-    return 50 // ` ~ (TLDE)
-  }
-
   if (row === 3 && hasLSGT === "LSGT" && column === 0) {
     return 10 // < > (LSGT - ISO key)
   }
 
   // For most keys, adjust column as getKeyName does
-  if (!(row === 0 && column === 0)) {
-    if (!(row === 3 && hasLSGT === "LSGT" && column === 0)) {
-      column += 1
-    }
+  // Exception: row 0 column 0 (backtick) and LSGT key don't need adjustment
+  if (
+    !(row === 0 && column === 0) &&
+    !(row === 3 && hasLSGT === "LSGT" && column === 0)
+  ) {
+    column += 1
   }
 
   // Special case for backslash
@@ -56,10 +54,10 @@ export function getMacOSKeyCode(
   // Define macOS virtual key codes for each keyboard row
   // Note: Index 0 is unused since column indexing starts at 1 after adjustment
   const keyCodesByRow = [
-    // Row 0: Number row (1-9, 0, -, =)
-    // Layout: 1! 2@ 3# 4$ 5% 6^ 7& 8* 9( 0) -_ =+
+    // Row 0: Number row (`1234567890-=)
+    // Layout: `~ 1! 2@ 3# 4$ 5% 6^ 7& 8* 9( 0) -_ =+
     [
-      null, // Index 0 (unused)
+      50, // Index 0: ` ~ (backtick/tilde)
       18, // Index 1: 1 !
       19, // Index 2: 2 @
       20, // Index 3: 3 #

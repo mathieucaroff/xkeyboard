@@ -192,15 +192,15 @@ export function MacOSConfiguration(props: MacOSConfigurationProps) {
 
   const xmlLayouts = `  <layouts>
     <layout first="0" last="17" mapSet="ANSI" modifiers="Modifiers"/>
-    <layout first="18" last="18" mapSet="JIS" modifiers="Modifiers"/>
-    <layout first="21" last="23" mapSet="JIS" modifiers="Modifiers"/>
-    <layout first="30" last="30" mapSet="JIS" modifiers="Modifiers"/>
-    <layout first="33" last="33" mapSet="JIS" modifiers="Modifiers"/>
-    <layout first="36" last="36" mapSet="JIS" modifiers="Modifiers"/>
-    <layout first="194" last="194" mapSet="JIS" modifiers="Modifiers"/>
-    <layout first="197" last="197" mapSet="JIS" modifiers="Modifiers"/>
-    <layout first="200" last="201" mapSet="JIS" modifiers="Modifiers"/>
-    <layout first="206" last="207" mapSet="JIS" modifiers="Modifiers"/>
+    <layout first="18" last="18" mapSet="ANSI" modifiers="Modifiers"/>
+    <layout first="21" last="23" mapSet="ANSI" modifiers="Modifiers"/>
+    <layout first="30" last="30" mapSet="ANSI" modifiers="Modifiers"/>
+    <layout first="33" last="33" mapSet="ANSI" modifiers="Modifiers"/>
+    <layout first="36" last="36" mapSet="ANSI" modifiers="Modifiers"/>
+    <layout first="194" last="194" mapSet="ANSI" modifiers="Modifiers"/>
+    <layout first="197" last="197" mapSet="ANSI" modifiers="Modifiers"/>
+    <layout first="200" last="201" mapSet="ANSI" modifiers="Modifiers"/>
+    <layout first="206" last="207" mapSet="ANSI" modifiers="Modifiers"/>
   </layouts>`
 
   const xmlModifierMap = `  <modifierMap id="Modifiers" defaultIndex="0">
@@ -223,22 +223,26 @@ export function MacOSConfiguration(props: MacOSConfigurationProps) {
     Object.entries(leanModifierMaps).map(
       ([modifierName, entries]: [string, KeyMapEntry[]]) => [
         modifierName,
-        entries
-          .map(
+        [
+          "      <!-- Space, Enter, Tab, Backspace, Escape -->",
+          '      <key code="49" output=" "/>',
+          '      <key code="36" output="&#x000D;"/>',
+          '      <key code="48" output="&#x0009;"/>',
+          '      <key code="51" output="&#x0008;"/>',
+          '      <key code="53" output="&#x001B;"/>',
+          "",
+          ...entries.map(
             ({ code, output, special }: KeyMapEntry) =>
               ({
                 comment: `      <!-- ${output} -->`,
                 undefined: `      <key code="${code}" output="${output}"/>`,
                 lineBreak: "",
               })[String(special)],
-          )
-          .join("\n"),
+          ),
+        ].join("\n"),
       ],
     ),
   )
-
-  console.log("modifierMaps", modifierMaps)
-  console.log("xmlKeyMapSet", xmlKeyMapSet)
 
   const xmlKeyMaps = `  <keyMapSet id="ANSI">
     <!-- Base keymap (no modifiers) -->
@@ -260,14 +264,6 @@ ${xmlKeyMapSet.option}
     <keyMap index="3">
 ${xmlKeyMapSet.shiftOption}
     </keyMap>
-  </keyMapSet>
-
-  <keyMapSet id="JIS">
-    <!-- JIS layout maps (simplified, referencing ANSI) -->
-    <keyMap index="0" baseMapSet="ANSI" baseIndex="0"/>
-    <keyMap index="1" baseMapSet="ANSI" baseIndex="1"/>
-    <keyMap index="2" baseMapSet="ANSI" baseIndex="2"/>
-    <keyMap index="3" baseMapSet="ANSI" baseIndex="3"/>
   </keyMapSet>`
 
   const xmlContent = [
