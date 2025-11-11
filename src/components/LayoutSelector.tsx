@@ -82,7 +82,7 @@ const ASSET2018FULL = [
   `
 ~ 1 2 3 4 5 6 7 8 9 0 _ +
 \` ! @ # $ % ^ & * ( ) - =
-³ Ä Œ Ë £ ‱ . Ü Ï Ö . ° §
+³ Ä Œ Ë £ : . Ü Ï Ö . ° § :‱
 ² ä œ ë £ ‰ . ü ï ö . ° ¤
 
 Q W D G J Y P U L : { } | ::
@@ -126,7 +126,7 @@ function parseKeyboardText(text: string, complexity: Complexity) {
       let replacementIndex = 0
       for (let i = 0; i < row.length; i++) {
         if (row[i] === ":" && replacementArray[replacementIndex]) {
-          row[i] = replacementArray[replacementIndex]
+          row[i] = replacementArray[replacementIndex]!
           replacementIndex++
         }
       }
@@ -134,18 +134,18 @@ function parseKeyboardText(text: string, complexity: Complexity) {
       return row
     })
 
-  let readCharacterGroup = ({ row, column }: Position) => {
+  let readCharacterGroup = ({ row, column }: Position): string[] => {
     let group = Array.from({ length: groupSize }, (_, offset) =>
       ((table[groupSize * row + offset] ?? [])[column] ?? "")
         .replace(/^\.$/, "")
         .replace(/^::$/, ":")
-        .replace(/^:.$/, "."),
+        .replace(/^:(\S)$/, "$1"),
     )
 
     if (complexity === "simple") {
-      return [group[1], group[0]]
+      return [group[1]!, group[0]!]
     } else {
-      return [group[1], group[0], group[3], group[2]]
+      return [group[1]!, group[0]!, group[3]!, group[2]!]
     }
   }
   Array.from({ length: 5 }, (_, row) => {
