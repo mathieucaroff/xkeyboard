@@ -1,38 +1,39 @@
 @import "./font.css";
 
 html {
-    font-family: RobotoFont, 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    background-color: var(--background-color);
-    color: var(--foreground-color);
+  font-family: RobotoFont, 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background-color: var(--background-color);
+  color: var(--foreground-color);
 }
 
 h1 {
-    font-family: PrismaFont;
-    font-size: 55px;
-    font-weight: initial;
-    margin: 0;
+  font-family: PrismaFont;
+  font-size: 55px;
+  font-weight: initial;
+  margin: 0;
 }
 
 /* dark theme */
 html {
-    --foreground-color: #000;
-    --background-color: #FFF;
+  --foreground-color: #000;
+  --background-color: #FFF;
 }
+
 html.dark {
-    --foreground-color: #FFF;
-    --background-color: #111;
+  --foreground-color: #FFF;
+  --background-color: #111;
 }
 
 .useful-command-list li pre {
-    margin: 0;
-    padding: 0;
+  margin: 0;
+  padding: 0;
 }
 
 .useful-command-list {
-    margin: 0;
-    padding-top: 0;
+  margin: 0;
+  padding-top: 0;
 }
 
 .title {
-    margin-top: 12px;
+  margin-top: 24px;
 }

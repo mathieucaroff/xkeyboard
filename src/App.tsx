@@ -1,5 +1,6 @@
 import React, { useState } from "react"
 import { XConfiguration } from "./components/XConfiguration"
+import { MacOSConfiguration } from "./components/MacOSConfiguration"
 import { LayoutSelector } from "./components/LayoutSelector"
 import { Input } from "antd"
 import { KeyboardView } from "./components/KeyboardView"
@@ -82,7 +83,10 @@ export function App() {
           width: 300,
         }}
       />
+      <h3 className="title">Linux X11 Configuration</h3>
       <XConfiguration keyboard={keyboard} />
+      <h3 className="title">macOS Configuration</h3>
+      <MacOSConfiguration keyboard={keyboard} />
     </>
   )
 }

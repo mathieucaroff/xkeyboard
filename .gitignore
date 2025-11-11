@@ -6,5 +6,7 @@ dist/
 !/src/
 !/asset/
 
+!.editorconfig
 !.gitignore
 !.prettierrc
+!.yarnrc.yml
