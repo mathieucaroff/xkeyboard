@@ -1,5 +1,6 @@
 import { getKeyName } from "../getKeyName"
 import { getSymbolName } from "../symbol/symbolTable"
+import { DownloadButton } from "./DownloadButton"
 
 function trimEmptyStringsFromArrayEnd(array: string[]) {
   while (array[array.length - 1] === "") {
@@ -53,8 +54,29 @@ export function XConfiguration(props: XConfigurationProp) {
     configurationLineArray.pop()
   }
 
+  const configText = `
+default partial alphanumeric_keys modifier_keys
+
+xkb_symbols "${keyboard.name}" {
+  name[Group1] = "${keyboard.longName}";
+
+${configurationLineArray.join("\n")}
+};
+`.slice(1, -1)
+
+  const downloadName = `${keyboard.name || "layout"}.xkb`
+
   return (
     <div>
+      <div className="config-header">
+        <h3>Linux X11 Configuration</h3>
+        <DownloadButton
+          filename={downloadName}
+          content={configText}
+          newline="lf"
+          encoding="utf-8"
+        />
+      </div>
       <div className="title">Useful commands:</div>
       <ul className="useful-command-list">
         <li>
@@ -70,17 +92,7 @@ export function XConfiguration(props: XConfigurationProp) {
           <pre>{`gsettings set org.gnome.desktop.input-sources sources "[('xkb', 'us+${keyboard.name}')]"`}</pre>
         </li>
       </ul>
-      <pre>
-        {`
-default partial alphanumeric_keys modifier_keys
-
-xkb_symbols "${keyboard.name}" {
-  name[Group1] = "${keyboard.longName}";
-
-${configurationLineArray.join("\n")}
-};
-`.slice(1, -1)}
-      </pre>
+      <pre>{configText}</pre>
     </div>
   )
 }

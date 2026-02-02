@@ -1,5 +1,6 @@
 import { getUnicodeName } from "../symbol/symbolTable"
 import { baseKeyMap } from "../symbol/windowsKeyMap"
+import { DownloadButton } from "./DownloadButton"
 
 export interface WindowsConfigurationProp {
   keyboard: Keyboard
@@ -94,15 +95,7 @@ export function WindowsConfiguration(props: WindowsConfigurationProp) {
     })
   })
 
-  return (
-    <div>
-      <div className="title">Warning</div>
-      <div>
-        Remember that the file must be saved with UTF-16 (LE) encoding and CRLF
-        line endings.
-      </div>
-      <pre>
-        {`
+  const configText = `
 KBD	${keyboard.name}	"${keyboard.longName}"
 
 COPYRIGHT	"(c) 2026 Your Name Here"
@@ -138,8 +131,27 @@ LANGUAGENAMES
 0409	English (United States)
 
 ENDKBD
-`.slice(1, -1)}
-      </pre>
+`.slice(1, -1)
+
+  const downloadName = `${keyboard.name || "layout"}.klc`
+
+  return (
+    <div>
+      <div className="config-header">
+        <h3>Windows Configuration</h3>
+        <DownloadButton
+          filename={downloadName}
+          content={configText}
+          newline="crlf"
+          encoding="utf-16le"
+        />
+      </div>
+      <div className="title">Warning</div>
+      <div>
+        Remember that the file must be saved with UTF-16 (LE) encoding and CRLF
+        line endings.
+      </div>
+      <pre>{configText}</pre>
     </div>
   )
 }

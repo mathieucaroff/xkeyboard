@@ -1,4 +1,5 @@
 import { getMacOSKeyCode } from "../getKeyName"
+import { DownloadButton } from "./DownloadButton"
 
 export interface MacOSConfigurationProps {
   keyboard: Keyboard
@@ -275,8 +276,19 @@ ${xmlKeyMapSet.shiftOption}
     xmlKeyboardEnd,
   ].join("\n")
 
+  const downloadName = `${keyboard.name || "layout"}.keylayout`
+
   return (
     <div>
+      <div className="config-header">
+        <h3>MacOS Configuration</h3>
+        <DownloadButton
+          filename={downloadName}
+          content={xmlContent}
+          newline="lf"
+          encoding="utf-8"
+        />
+      </div>
       <p>macOS Keyboard Layout for: {keyboardName}</p>
       <p>
         Generated from keyboard layout: <strong>{keyboard.name}</strong>

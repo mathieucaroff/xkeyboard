@@ -78,7 +78,6 @@ export function App() {
             label: "Linux",
             children: (
               <>
-                <h3>Linux X11 Configuration</h3>
                 <XConfiguration keyboard={keyboard} />
               </>
             ),
@@ -88,7 +87,6 @@ export function App() {
             label: "MacOS",
             children: (
               <>
-                <h3>MacOS Configuration</h3>
                 <MacOSConfiguration keyboard={keyboard} />
               </>
             ),
@@ -98,7 +96,6 @@ export function App() {
             label: "Windows",
             children: (
               <>
-                <h3>Windows Configuration</h3>
                 <WindowsConfiguration keyboard={keyboard} />
               </>
             ),

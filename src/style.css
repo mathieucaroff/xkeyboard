@@ -41,3 +41,26 @@ html.dark {
 .os-tabs {
   margin-top: 24px;
 }
+
+.config-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin: 16px 40px 12px 0;
+}
+
+.config-header h3 {
+  margin: 0;
+}
+
+.invert {
+  background-color: var(--foreground-color);
+  color: var(--background-color);
+  padding: 2px 4px;
+  border-radius: 4px;
+}
+
+.download-button {
+  border: 1px solid var(--foreground-color);
+}
