@@ -10,7 +10,7 @@ type KeySymbol = string
 interface Keyboard {
   kind: KeyboardKind
   name: string
-  groupName: string
+  longName: string
   layout: KeyboardLayout
   hasLSGT: HasLSGT
   hasNavigationPad: HasNavigationPad

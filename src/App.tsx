@@ -2,10 +2,9 @@ import { useState } from "react"
 import { XConfiguration } from "./components/XConfiguration"
 import { MacOSConfiguration } from "./components/MacOSConfiguration"
 import { LayoutSelector } from "./components/LayoutSelector"
-import { Collapse, Input } from "antd"
+import { Input, Tabs } from "antd"
 import { KeyboardView } from "./components/KeyboardView"
-
-const CollapsePanel = Collapse.Panel
+import { WindowsConfiguration } from "components/WindowsConfiguration"
 
 export function App() {
   let [keyboardName, setKeyboardName] = useState("")
@@ -23,7 +22,7 @@ export function App() {
   let keyboard: Keyboard = {
     kind: keyboardKind,
     name: keyboardName,
-    groupName: keyboardLongName,
+    longName: keyboardLongName,
     layout: keyboardLayout,
     hasLSGT,
     hasNavigationPad,
@@ -70,14 +69,42 @@ export function App() {
           width: 300,
         }}
       />
-      <Collapse defaultActiveKey={["Linux"]} accordion>
-        <CollapsePanel header="Linux X11 Configuration" key="Linux">
-          <XConfiguration keyboard={keyboard} />
-        </CollapsePanel>
-        <CollapsePanel header="MacOS Configuration" key="MacOS">
-          <MacOSConfiguration keyboard={keyboard} />
-        </CollapsePanel>
-      </Collapse>
+      <Tabs
+        className="os-tabs"
+        type="card"
+        items={[
+          {
+            key: "linux",
+            label: "Linux",
+            children: (
+              <>
+                <h3>Linux X11 Configuration</h3>
+                <XConfiguration keyboard={keyboard} />
+              </>
+            ),
+          },
+          {
+            key: "macos",
+            label: "MacOS",
+            children: (
+              <>
+                <h3>MacOS Configuration</h3>
+                <MacOSConfiguration keyboard={keyboard} />
+              </>
+            ),
+          },
+          {
+            key: "windows",
+            label: "Windows",
+            children: (
+              <>
+                <h3>Windows Configuration</h3>
+                <WindowsConfiguration keyboard={keyboard} />
+              </>
+            ),
+          },
+        ]}
+      />
     </>
   )
 }

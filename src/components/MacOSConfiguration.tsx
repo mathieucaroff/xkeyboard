@@ -181,7 +181,7 @@ export function MacOSConfiguration(props: MacOSConfigurationProps) {
   const keyboardId =
     keyboard.name.replace(/[^a-zA-Z0-9]/g, "") || "CustomKeyboard"
   const keyboardName =
-    keyboard.groupName || keyboard.name || "Custom Keyboard Layout"
+    keyboard.longName || keyboard.name || "Custom Keyboard Layout"
 
   const xmlHeader = `<?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE keyboard PUBLIC "" "file://localhost/System/Library/DTDs/KeyboardLayout.dtd">`

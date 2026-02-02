@@ -75,7 +75,7 @@ export function XConfiguration(props: XConfigurationProp) {
 default partial alphanumeric_keys modifier_keys
 
 xkb_symbols "${keyboard.name}" {
-  name[Group1] = "${keyboard.groupName}";
+  name[Group1] = "${keyboard.longName}";
 
 ${configurationLineArray.join("\n")}
 };
