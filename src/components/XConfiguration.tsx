@@ -69,7 +69,7 @@ ${configurationLineArray.join("\n")}
   return (
     <div>
       <div className="config-header">
-        <h3>Linux X11 Configuration</h3>
+        <h3>Linux / Unix, X11 / Wayland Configuration</h3>
         <DownloadButton
           filename={downloadName}
           content={configText}

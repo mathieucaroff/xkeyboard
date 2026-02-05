@@ -1,3 +1,4 @@
+import { Fragment } from "react/jsx-runtime"
 import "./keyboardView.css"
 
 export interface KeyboardViewProp {
@@ -24,9 +25,8 @@ export function KeyboardView(prop: KeyboardViewProp) {
                 </td>
               ) : null}
               {row.map((group, m) => (
-                <>
-                  {kind === "TypeMatrix" &&
-                  [m === 6, m === 5, m === 5, m === 5][k] ? (
+                <Fragment key={m}>
+                  {kind === "TypeMatrix" && m === (k === 0 ? 6 : 5) ? (
                     <td
                       className={`keyboard__key keyboard__miniText keyboard__centralKey--${kind}--${k}`}
                     >
@@ -36,7 +36,6 @@ export function KeyboardView(prop: KeyboardViewProp) {
                   {
                     <td
                       className={`keyboard__key keyboard__key--${kind}--${m}--${k}`}
-                      key={m}
                     >
                       <div>
                         <span className="keyboard__character">{group[1]}</span>
@@ -52,7 +51,7 @@ export function KeyboardView(prop: KeyboardViewProp) {
                       </div>
                     </td>
                   }
-                </>
+                </Fragment>
               ))}
             </tr>
           </tbody>
