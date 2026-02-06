@@ -45,7 +45,7 @@ html.dark {
 .config-header {
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  justify-content: flex-start;
   gap: 12px;
   margin: 16px 40px 12px 0;
 }

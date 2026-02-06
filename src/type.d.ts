@@ -7,6 +7,9 @@ declare module "bundle-text:*" {
 // Ambient type declarations
 type KeySymbol = string
 
+type NewlineStyle = "lf" | "crlf"
+type TextEncoding = "utf-8" | "utf-16le"
+
 interface Keyboard {
   kind: KeyboardKind
   name: string

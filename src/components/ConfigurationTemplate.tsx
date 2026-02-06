@@ -1,26 +1,17 @@
 import { Button } from "antd"
 import type { ReactNode } from "react"
 import { DownloadButton } from "./DownloadButton"
+import { normalizeNewlines } from "../lib/textEncoding"
 
 export interface ConfigurationTemplateProps {
   title: string
   keyboardName: string
   warning?: ReactNode
   fileExtension: string
-  fileNewline?: "lf" | "crlf"
-  fileEncoding?: "utf-8" | "utf-16le"
+  fileNewline?: NewlineStyle
+  fileEncoding?: TextEncoding
   keyboardConfigText: string
   children?: ReactNode
-}
-
-function normalizeNewlines(text: string, newline: "lf" | "crlf") {
-  if (text.slice(-1) !== "\n") {
-    text += "\n"
-  }
-  if (newline === "crlf") {
-    return text.replace(/\r?\n/g, "\r\n")
-  }
-  return text.replace(/\r\n/g, "\n")
 }
 
 function sanitizeExtension(extension: string) {
