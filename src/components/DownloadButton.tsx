@@ -39,7 +39,7 @@ export function DownloadButton(props: DownloadButtonProps) {
   return (
     <Button
       size="large"
-      className="download-button"
+      className="download-button config-button"
       onClick={() => {
         const text = normalizeNewlines(content, newline)
         const blob =
@@ -60,6 +60,15 @@ export function DownloadButton(props: DownloadButtonProps) {
       }}
     >
       {label}
+      <svg
+        className="button-icon"
+        viewBox="0 0 24 24"
+        aria-hidden
+        focusable="false"
+      >
+        <path d="M12 3a1 1 0 0 1 1 1v9.59l2.3-2.3a1 1 0 1 1 1.4 1.42l-4.01 4a1 1 0 0 1-1.4 0l-4.01-4a1 1 0 0 1 1.4-1.42l2.32 2.3V4a1 1 0 0 1 1-1z" />
+        <path d="M5 19a1 1 0 0 1 1-1h12a1 1 0 1 1 0 2H6a1 1 0 0 1-1-1z" />
+      </svg>
     </Button>
   )
 }

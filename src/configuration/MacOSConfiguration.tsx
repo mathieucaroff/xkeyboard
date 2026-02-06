@@ -1,5 +1,5 @@
 import { getMacOSKeyCode } from "../getKeyName"
-import { DownloadButton } from "./DownloadButton"
+import { ConfigurationTemplate } from "../components/ConfigurationTemplate"
 
 export interface MacOSConfigurationProps {
   keyboard: Keyboard
@@ -267,7 +267,7 @@ ${xmlKeyMapSet.shiftOption}
     </keyMap>
   </keyMapSet>`
 
-  const xmlContent = [
+  const xmlKeyboardConfig = [
     xmlHeader,
     xmlKeyboardStart,
     xmlLayouts,
@@ -276,24 +276,13 @@ ${xmlKeyMapSet.shiftOption}
     xmlKeyboardEnd,
   ].join("\n")
 
-  const downloadName = `${keyboard.name || "layout"}.keylayout`
-
   return (
-    <div>
-      <div className="config-header">
-        <h3>MacOS Configuration</h3>
-        <DownloadButton
-          filename={downloadName}
-          content={xmlContent}
-          newline="lf"
-          encoding="utf-8"
-        />
-      </div>
-      <p>macOS Keyboard Layout for: {keyboardName}</p>
-      <p>
-        Generated from keyboard layout: <strong>{keyboard.name}</strong>
-      </p>
-
+    <ConfigurationTemplate
+      title="MacOS Configuration"
+      keyboardName={keyboard.name}
+      fileExtension="keylayout"
+      keyboardConfigText={xmlKeyboardConfig}
+    >
       <p>Installation Instructions:</p>
       <ol>
         <li>
@@ -314,7 +303,6 @@ ${xmlKeyMapSet.shiftOption}
         key codes are mapped from the original X11 layout to macOS virtual key
         codes.
       </p>
-      <pre>{xmlContent}</pre>
-    </div>
+    </ConfigurationTemplate>
   )
 }

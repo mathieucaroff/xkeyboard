@@ -1,10 +1,10 @@
 import { useState } from "react"
-import { XConfiguration } from "./components/XConfiguration"
-import { MacOSConfiguration } from "./components/MacOSConfiguration"
+import { LinuxConfiguration } from "./configuration/LinuxConfiguration"
+import { MacOSConfiguration } from "./configuration/MacOSConfiguration"
 import { LayoutSelector } from "./components/LayoutSelector"
 import { Input, Tabs } from "antd"
 import { KeyboardView } from "./components/KeyboardView"
-import { WindowsConfiguration } from "components/WindowsConfiguration"
+import { WindowsConfiguration } from "configuration/WindowsConfiguration"
 
 export function App() {
   let [keyboardName, setKeyboardName] = useState("")
@@ -55,9 +55,7 @@ export function App() {
         onChange={(ev) => {
           setKeyboardName(ev.currentTarget.value)
         }}
-        style={{
-          width: 300,
-        }}
+        style={{ width: 300 }}
       />
       <div className="title">Long layout name</div>
       <Input
@@ -65,9 +63,7 @@ export function App() {
         onChange={(ev) => {
           setKeyboardLongName(ev.currentTarget.value)
         }}
-        style={{
-          width: 300,
-        }}
+        style={{ width: 300 }}
       />
       <Tabs
         className="os-tabs"
@@ -78,7 +74,7 @@ export function App() {
             label: "Linux",
             children: (
               <>
-                <XConfiguration keyboard={keyboard} />
+                <LinuxConfiguration keyboard={keyboard} />
               </>
             ),
           },

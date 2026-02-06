@@ -50,6 +50,35 @@ html.dark {
   margin: 16px 40px 12px 0;
 }
 
+.config-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.config-button {
+  border: 1px solid var(--foreground-color);
+}
+
+.button-icon {
+  margin-left: 6px;
+  width: 1.4rem;
+  height: 1.4rem;
+  display: inline-block;
+  vertical-align: -0.125em;
+  fill: currentColor;
+}
+
+.config-instruction,
+.config-warning {
+  margin: 8px 0 12px;
+}
+
+.config-warning {
+  padding: 8px 12px;
+  border-left: 3px solid var(--foreground-color);
+}
+
 .config-header h3 {
   margin: 0;
 }
@@ -59,8 +88,4 @@ html.dark {
   color: var(--background-color);
   padding: 2px 4px;
   border-radius: 4px;
-}
-
-.download-button {
-  border: 1px solid var(--foreground-color);
 }

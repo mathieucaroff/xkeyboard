@@ -1,6 +1,6 @@
 import { getKeyName } from "../getKeyName"
 import { getSymbolName } from "../symbol/symbolTable"
-import { DownloadButton } from "./DownloadButton"
+import { ConfigurationTemplate } from "../components/ConfigurationTemplate"
 
 function trimEmptyStringsFromArrayEnd(array: string[]) {
   while (array[array.length - 1] === "") {
@@ -12,7 +12,7 @@ export interface XConfigurationProp {
   keyboard: Keyboard
 }
 
-export function XConfiguration(props: XConfigurationProp) {
+export function LinuxConfiguration(props: XConfigurationProp) {
   let { keyboard } = props
   let { characterTable } = keyboard.layout
 
@@ -64,19 +64,13 @@ ${configurationLineArray.join("\n")}
 };
 `.slice(1, -1)
 
-  const downloadName = `${keyboard.name || "layout"}.xkb`
-
   return (
-    <div>
-      <div className="config-header">
-        <h3>Linux / Unix, X11 / Wayland Configuration</h3>
-        <DownloadButton
-          filename={downloadName}
-          content={configText}
-          newline="lf"
-          encoding="utf-8"
-        />
-      </div>
+    <ConfigurationTemplate
+      title="Linux / Unix, X11 / Wayland Configuration"
+      keyboardName={keyboard.name}
+      fileExtension="xkb"
+      keyboardConfigText={configText}
+    >
       <div className="title">Useful commands:</div>
       <ul className="useful-command-list">
         <li>
@@ -92,7 +86,6 @@ ${configurationLineArray.join("\n")}
           <pre>{`gsettings set org.gnome.desktop.input-sources sources "[('xkb', 'us+${keyboard.name}')]"`}</pre>
         </li>
       </ul>
-      <pre>{configText}</pre>
-    </div>
+    </ConfigurationTemplate>
   )
 }
