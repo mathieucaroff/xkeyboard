@@ -41,16 +41,17 @@ export function WindowsConfiguration(props: WindowsConfigurationProp) {
   }
 
   const deriveVk = (group: string[], fallbackVk: string) => {
+    let resultVk = fallbackVk
     const candidates = [group[0], group[1]].filter(Boolean) as string[]
     const digit = candidates.find((c) => /^[0-9]$/.test(c))
     if (digit) {
-      return digit
+      resultVk = digit
     }
     const letter = candidates.find((c) => /^[a-zA-Z]$/.test(c))
     if (letter) {
-      return letter.toUpperCase()
+      resultVk = letter.toUpperCase()
     }
-    return fallbackVk
+    return resultVk + (resultVk.length < 8 ? "\t" : "")
   }
 
   characterTable.forEach((row, rowIndex) => {
@@ -90,7 +91,7 @@ export function WindowsConfiguration(props: WindowsConfigurationProp) {
       ].join(", ")
 
       contentTable.push(
-        `${key.sc}\t${vk}\t\t${cap}\t${outputValueListText}\t\t// ${comment}`,
+        `${key.sc}\t${vk}\t${cap}\t${outputValueListText}\t\t// ${comment}`,
       )
     })
   })
@@ -143,7 +144,7 @@ ENDKBD
   return (
     <ConfigurationTemplate
       title="Windows Configuration"
-      keyboardName={keyboard.name}
+      defaultedKeyboardName={keyboard.defaultedName}
       fileExtension="klc"
       fileNewline="crlf"
       fileEncoding="utf-16le"

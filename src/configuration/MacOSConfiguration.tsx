@@ -179,15 +179,12 @@ export function MacOSConfiguration(props: MacOSConfigurationProps) {
   )
 
   // Generate the XML sections
-  const keyboardId =
-    keyboard.name.replace(/[^a-zA-Z0-9]/g, "") || "CustomKeyboard"
-  const keyboardName =
-    keyboard.longName || keyboard.name || "Custom Keyboard Layout"
+  const keyboardId = keyboard.name.replace(/[^a-zA-Z0-9]/g, "")
 
   const xmlHeader = `<?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE keyboard PUBLIC "" "file://localhost/System/Library/DTDs/KeyboardLayout.dtd">`
 
-  const xmlKbName = escapeXml(keyboardName).replace(/'/g, "&#39;")
+  const xmlKbName = escapeXml(keyboard.longName).replace(/'/g, "&#39;")
   const xmlKeyboardStart = `<keyboard group="126" id="${keyboardId}" name="${xmlKbName}" maxout="1">`
   const xmlKeyboardEnd = `</keyboard>`
 
@@ -279,7 +276,7 @@ ${xmlKeyMapSet.shiftOption}
   return (
     <ConfigurationTemplate
       title="MacOS Configuration"
-      keyboardName={keyboard.name}
+      defaultedKeyboardName={keyboard.defaultedName}
       fileExtension="keylayout"
       keyboardConfigText={xmlKeyboardConfig}
     >

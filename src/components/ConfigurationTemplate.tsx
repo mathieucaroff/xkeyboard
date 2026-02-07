@@ -2,10 +2,11 @@ import { Button } from "antd"
 import type { ReactNode } from "react"
 import { createTextBlob, normalizeNewlines } from "../lib/textEncoding"
 import { CopyIcon, DownloadIcon } from "../icon/ActionIcons"
+import { KEYBOARD_DEFAULT_NAME } from "../App"
 
 export interface ConfigurationTemplateProps {
   title: string
-  keyboardName: string
+  defaultedKeyboardName: string
   warning?: ReactNode
   fileExtension: string
   fileNewline?: NewlineStyle
@@ -21,7 +22,7 @@ function sanitizeExtension(extension: string) {
 export function ConfigurationTemplate(props: ConfigurationTemplateProps) {
   const {
     title,
-    keyboardName,
+    defaultedKeyboardName,
     warning,
     fileExtension,
     fileNewline = "lf",
@@ -30,7 +31,7 @@ export function ConfigurationTemplate(props: ConfigurationTemplateProps) {
     children,
   } = props
 
-  const filename = `${keyboardName || "layout"}.${sanitizeExtension(fileExtension)}`
+  const filename = `${defaultedKeyboardName}.${sanitizeExtension(fileExtension)}`
   const normalizedText = normalizeNewlines(keyboardConfigText, fileNewline)
 
   const handleCopy = async () => {
@@ -52,10 +53,16 @@ export function ConfigurationTemplate(props: ConfigurationTemplateProps) {
   }
 
   return (
-    <div>
-      <div className="mb-3 mr-10 mt-4">
-        <h3 className="m-0">{title}</h3>
+    <div className="rounded border border-black p-2 my-4 overflow-x-auto">
+      <div className="mb-3 mr-10">
+        <h3 className="text-xl font-semibold tracking-tight">{title}</h3>
       </div>
+      {children ? <div className="mb-3 mt-2">{children}</div> : null}
+      {warning ? (
+        <div className="mb-3 mt-2 border-l-[3px] border-current py-2 pl-3">
+          {warning}
+        </div>
+      ) : null}
       <div className="flex flex-wrap items-center gap-2.5">
         <Button
           size="large"
@@ -77,13 +84,8 @@ export function ConfigurationTemplate(props: ConfigurationTemplateProps) {
           <DownloadIcon />
         </Button>
       </div>
-      {children ? <div className="mb-3 mt-2">{children}</div> : null}
-      {warning ? (
-        <div className="mb-3 mt-2 border-l-[3px] border-current py-2 pl-3">
-          {warning}
-        </div>
-      ) : null}
-      <pre>{keyboardConfigText}</pre>
+      <div className="my-4 h-px bg-black" />
+      <pre className="[tab-size:8]">{keyboardConfigText}</pre>
     </div>
   )
 }

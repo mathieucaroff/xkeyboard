@@ -13,6 +13,7 @@ type TextEncoding = "utf-8" | "utf-16le"
 interface Keyboard {
   kind: KeyboardKind
   name: string
+  defaultedName: string
   longName: string
   layout: KeyboardLayout
   hasLSGT: HasLSGT

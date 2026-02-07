@@ -67,7 +67,7 @@ ${configurationLineArray.join("\n")}
   return (
     <ConfigurationTemplate
       title="Linux / Unix, X11 / Wayland Configuration"
-      keyboardName={keyboard.name}
+      defaultedKeyboardName={keyboard.defaultedName}
       fileExtension="xkb"
       keyboardConfigText={configText}
     >
@@ -80,7 +80,7 @@ ${configurationLineArray.join("\n")}
           <pre className="m-0 p-0">setxkbmap -print -verbose 10</pre>
         </li>
         <li>
-          <pre className="m-0 p-0">{`setxkbmap us ${keyboard.name}`}</pre>
+          <pre className="m-0 p-0">{`setxkbmap us ${keyboard.defaultedName}`}</pre>
         </li>
         <li>
           <pre className="m-0 p-0">{`gsettings set org.gnome.desktop.input-sources sources "[('xkb', 'us+${keyboard.name}')]"`}</pre>

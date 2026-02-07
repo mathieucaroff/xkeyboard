@@ -6,6 +6,9 @@ import { Input, Tabs } from "antd"
 import { KeyboardView } from "./components/KeyboardView"
 import { WindowsConfiguration } from "./configuration/WindowsConfiguration"
 
+export const KEYBOARD_DEFAULT_NAME = "layout"
+export const KEYBOARD_DEFAULT_LONG_NAME = "Custom Keyboard Layout"
+
 export function App() {
   let [keyboardName, setKeyboardName] = useState("")
   let [keyboardLongName, setKeyboardLongName] = useState("")
@@ -22,12 +25,24 @@ export function App() {
   let keyboard: Keyboard = {
     kind: keyboardKind,
     name: keyboardName,
-    longName: keyboardLongName,
+    defaultedName: keyboardName || KEYBOARD_DEFAULT_NAME,
+    longName: keyboardLongName || KEYBOARD_DEFAULT_LONG_NAME,
     layout: keyboardLayout,
     hasLSGT,
     hasNavigationPad,
     hasNumpad,
   }
+
+  const configurationOs = ["Linux", "MacOS", "Windows"] as const
+  const configurationComponents = {
+    Linux: LinuxConfiguration,
+    MacOS: MacOSConfiguration,
+    Windows: WindowsConfiguration,
+  }
+  let configurationTabs = configurationOs.map((os) => {
+    let Component = configurationComponents[os]
+    return { key: os, label: os, children: <Component keyboard={keyboard} /> }
+  })
 
   return (
     <>
@@ -56,6 +71,7 @@ export function App() {
           setKeyboardName(ev.currentTarget.value)
         }}
         className="w-[300px]"
+        placeholder={KEYBOARD_DEFAULT_NAME}
       />
       <div className="mt-6">Long layout name</div>
       <Input
@@ -65,39 +81,7 @@ export function App() {
         }}
         className="w-[300px]"
       />
-      <Tabs
-        className="mt-6"
-        type="card"
-        items={[
-          {
-            key: "linux",
-            label: "Linux",
-            children: (
-              <>
-                <LinuxConfiguration keyboard={keyboard} />
-              </>
-            ),
-          },
-          {
-            key: "macos",
-            label: "MacOS",
-            children: (
-              <>
-                <MacOSConfiguration keyboard={keyboard} />
-              </>
-            ),
-          },
-          {
-            key: "windows",
-            label: "Windows",
-            children: (
-              <>
-                <WindowsConfiguration keyboard={keyboard} />
-              </>
-            ),
-          },
-        ]}
-      />
+      <Tabs className="mt-6" type="card" items={configurationTabs} />
     </>
   )
 }
