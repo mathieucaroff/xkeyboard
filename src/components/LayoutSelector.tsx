@@ -220,8 +220,8 @@ export function LayoutSelector(prop: LayoutSelectorProp) {
 
   return (
     <>
-      <div className="title">Keyboard Layout</div>
-      <div>
+      <div className="mt-6">Keyboard Layout</div>
+      <div className="flex flex-wrap gap-2">
         <Select
           onChange={(value) => {
             setKeyboardSelectValue(value)
@@ -262,7 +262,7 @@ export function LayoutSelector(prop: LayoutSelectorProp) {
             })
           }}
           value={keyboardSelectValue}
-          style={{ width: 150 }}
+          className="w-[150px]"
           options={[
             { value: "other" },
             { value: "Qwerty" },
@@ -278,7 +278,7 @@ export function LayoutSelector(prop: LayoutSelectorProp) {
             setKeyboardSelectValue("other")
           }}
           value={keyboardComplexity}
-          style={{ width: 400 }}
+          className="w-[400px]"
           options={[
             {
               label: "simple (upper and lower: groups of two lines)",
@@ -310,11 +310,11 @@ export function LayoutSelector(prop: LayoutSelectorProp) {
             }
           }}
           value={keyboardKind}
-          style={{ width: 110 }}
+          className="w-[110px]"
           options={[{ value: "Basic" }, { value: "TypeMatrix" }]}
         />
       </div>
-      <div>
+      <div className="mt-2">
         <Checkbox
           checked={hasLSGT === "LSGT"}
           disabled={keyboardKind === "TypeMatrix"}
@@ -325,7 +325,7 @@ export function LayoutSelector(prop: LayoutSelectorProp) {
           Has LSGT key
         </Checkbox>
       </div>
-      <div>
+      <div className="mt-2">
         <Input.TextArea
           value={keyboardText}
           onChange={(ev) => {
@@ -341,9 +341,7 @@ export function LayoutSelector(prop: LayoutSelectorProp) {
             minRows: 8,
             maxRows: 20,
           }}
-          style={{
-            fontFamily: "monospace",
-          }}
+          className="font-mono"
         />
       </div>
     </>

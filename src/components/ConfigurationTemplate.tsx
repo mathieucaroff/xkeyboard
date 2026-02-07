@@ -53,13 +53,13 @@ export function ConfigurationTemplate(props: ConfigurationTemplateProps) {
 
   return (
     <div>
-      <div className="config-header">
-        <h3>{title}</h3>
+      <div className="mb-3 mr-10 mt-4">
+        <h3 className="m-0">{title}</h3>
       </div>
-      <div className="config-actions">
+      <div className="flex flex-wrap items-center gap-2.5">
         <Button
           size="large"
-          className="copy-button config-button"
+          className="!border !border-current"
           onClick={handleCopy}
         >
           Copy to clipboard
@@ -67,15 +67,22 @@ export function ConfigurationTemplate(props: ConfigurationTemplateProps) {
         </Button>
         <Button
           size="large"
-          className="download-button config-button"
+          className="!border !border-current"
           onClick={handleDownload}
         >
-          Download <code className="invert">{filename}</code>
+          Download{" "}
+          <code className="rounded bg-[color:var(--foreground-color)] px-1 py-0.5 text-[color:var(--background-color)]">
+            {filename}
+          </code>
           <DownloadIcon />
         </Button>
       </div>
-      {children ? <div className="config-instruction">{children}</div> : null}
-      {warning ? <div className="config-warning">{warning}</div> : null}
+      {children ? <div className="mb-3 mt-2">{children}</div> : null}
+      {warning ? (
+        <div className="mb-3 mt-2 border-l-[3px] border-current py-2 pl-3">
+          {warning}
+        </div>
+      ) : null}
       <pre>{keyboardConfigText}</pre>
     </div>
   )

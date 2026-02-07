@@ -1,7 +1,7 @@
 export function CopyIcon() {
   return (
     <svg
-      className="button-icon"
+      className="ml-1.5 inline-block h-5 w-5 align-[-0.125em] fill-current"
       viewBox="0 0 24 24"
       aria-hidden
       focusable="false"
@@ -15,7 +15,7 @@ export function CopyIcon() {
 export function DownloadIcon() {
   return (
     <svg
-      className="button-icon"
+      className="ml-1.5 inline-block h-5 w-5 align-[-0.125em] fill-current"
       viewBox="0 0 24 24"
       aria-hidden
       focusable="false"

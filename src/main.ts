@@ -5,7 +5,7 @@ import * as packageInfo from "../package.json"
 import { App } from "./App"
 import { githubCornerHTML } from "./lib/githubCorner"
 
-import "./style.css"
+import "./tailwind.css"
 
 function main() {
   let cornerDiv = document.createElement("div")

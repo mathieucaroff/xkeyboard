@@ -71,19 +71,19 @@ ${configurationLineArray.join("\n")}
       fileExtension="xkb"
       keyboardConfigText={configText}
     >
-      <div className="title">Useful commands:</div>
-      <ul className="useful-command-list">
+      <div className="mt-6">Useful commands:</div>
+      <ul className="m-0 pt-0">
         <li>
-          <pre>vim /usr/share/X11/xkb/symbols/us</pre>
+          <pre className="m-0 p-0">vim /usr/share/X11/xkb/symbols/us</pre>
         </li>
         <li>
-          <pre>setxkbmap -print -verbose 10</pre>
+          <pre className="m-0 p-0">setxkbmap -print -verbose 10</pre>
         </li>
         <li>
-          <pre>{`setxkbmap us ${keyboard.name}`}</pre>
+          <pre className="m-0 p-0">{`setxkbmap us ${keyboard.name}`}</pre>
         </li>
         <li>
-          <pre>{`gsettings set org.gnome.desktop.input-sources sources "[('xkb', 'us+${keyboard.name}')]"`}</pre>
+          <pre className="m-0 p-0">{`gsettings set org.gnome.desktop.input-sources sources "[('xkb', 'us+${keyboard.name}')]"`}</pre>
         </li>
       </ul>
     </ConfigurationTemplate>

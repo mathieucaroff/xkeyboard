@@ -23,7 +23,10 @@
     "@types/react": "^18.2.73",
     "@types/react-dom": "^18.2.23",
     "@vitejs/plugin-react": "^4.2.1",
+    "autoprefixer": "^10.4.20",
+    "postcss": "^8.4.47",
     "prettier": "^3.2.5",
+    "tailwindcss": "^3.4.17",
     "process": "^0.11.10",
     "typescript": "^5.4.3",
     "vite": "^5.4.14"

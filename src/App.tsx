@@ -49,24 +49,24 @@ export function App() {
         }}
       />
       <KeyboardView keyboard={keyboard} />
-      <div className="title">Layout name</div>
+      <div className="mt-6">Layout name</div>
       <Input
         value={keyboardName}
         onChange={(ev) => {
           setKeyboardName(ev.currentTarget.value)
         }}
-        style={{ width: 300 }}
+        className="w-[300px]"
       />
-      <div className="title">Long layout name</div>
+      <div className="mt-6">Long layout name</div>
       <Input
         value={keyboardLongName}
         onChange={(ev) => {
           setKeyboardLongName(ev.currentTarget.value)
         }}
-        style={{ width: 300 }}
+        className="w-[300px]"
       />
       <Tabs
-        className="os-tabs"
+        className="mt-6"
         type="card"
         items={[
           {
