@@ -14,7 +14,7 @@
     "outDir": "./dist",
     "rootDir": "./src",
     "removeComments": true,
-    "noEmit": true, // Parcel handles compilation
+    "noEmit": true, // Vite handles compilation
 
     // Type Checking
     "strict": true,

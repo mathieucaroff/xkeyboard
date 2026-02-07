@@ -4,7 +4,7 @@ import { MacOSConfiguration } from "./configuration/MacOSConfiguration"
 import { LayoutSelector } from "./components/LayoutSelector"
 import { Input, Tabs } from "antd"
 import { KeyboardView } from "./components/KeyboardView"
-import { WindowsConfiguration } from "configuration/WindowsConfiguration"
+import { WindowsConfiguration } from "./configuration/WindowsConfiguration"
 
 export function App() {
   let [keyboardName, setKeyboardName] = useState("")

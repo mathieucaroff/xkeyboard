@@ -1,5 +1,5 @@
-import keysymdef from "bundle-text:../../asset/x11/keysymdef.h"
-import unicodeData from "bundle-text:../../asset/symbols/UnicodeData17.txt"
+import keysymdef from "../../asset/x11/keysymdef.h?raw"
+import unicodeData from "../../asset/symbols/UnicodeData17.txt?raw"
 
 const symbolNameTable: string[] = []
 const symbolNameUnicodeTable: string[] = {} as any

@@ -3,10 +3,12 @@
   "version": "1.0.0",
   "author": "Mathieu CAROFF <mathieu.caroff@free.fr>",
   "license": "JAM",
+  "type": "module",
   "packageManager": "yarn@4.1.1+sha256.f3cc0eda8e5560e529c7147565b30faa43b4e472d90e8634d7134a37c7f59781",
   "scripts": {
-    "dev": "parcel src/index.html",
-    "build": "parcel build src/index.html"
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
   },
   "repository": {
     "url": "https://github.com/mathieucaroff/xkeyboard"
@@ -17,13 +19,13 @@
     "react-dom": "^18.2.0"
   },
   "devDependencies": {
-    "@parcel/transformer-inline-string": "^2.16.4",
     "@types/node": "^20.12.2",
     "@types/react": "^18.2.73",
     "@types/react-dom": "^18.2.23",
-    "parcel": "^2.16.4",
+    "@vitejs/plugin-react": "^4.2.1",
     "prettier": "^3.2.5",
     "process": "^0.11.10",
-    "typescript": "^5.4.3"
+    "typescript": "^5.4.3",
+    "vite": "^5.4.14"
   }
 }
