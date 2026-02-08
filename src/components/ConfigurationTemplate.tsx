@@ -1,8 +1,8 @@
+import { KEYBOARD_DEFAULT_NAME } from "../App"
+import { CopyIcon, DownloadIcon } from "../icon/ActionIcons"
+import { createTextBlob, normalizeNewlines } from "../lib/textEncoding"
 import { Button } from "antd"
 import type { ReactNode } from "react"
-import { createTextBlob, normalizeNewlines } from "../lib/textEncoding"
-import { CopyIcon, DownloadIcon } from "../icon/ActionIcons"
-import { KEYBOARD_DEFAULT_NAME } from "../App"
 
 export interface ConfigurationTemplateProps {
   title: string

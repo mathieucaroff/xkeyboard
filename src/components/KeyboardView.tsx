@@ -1,5 +1,5 @@
-import { Fragment } from "react/jsx-runtime"
 import "./keyboardView.css"
+import { Fragment } from "react/jsx-runtime"
 
 export interface KeyboardViewProp {
   className?: string

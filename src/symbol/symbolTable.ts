@@ -1,5 +1,5 @@
-import keysymdef from "../../asset/x11/keysymdef.h?raw"
 import unicodeData from "../../asset/symbols/UnicodeData17.txt?raw"
+import keysymdef from "../../asset/x11/keysymdef.h?raw"
 
 const symbolNameTable: string[] = []
 const symbolNameUnicodeTable: string[] = {} as any

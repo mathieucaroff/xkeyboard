@@ -63,11 +63,16 @@ export function App() {
         components: {
           Tabs: {},
         },
+        token: {
+          colorPrimary: "#fa8c16",
+          colorPrimaryHover: "#ff9c2a",
+          colorPrimaryActive: "#d46b08",
+        },
       }}
     >
       <Button
         size="large"
-        className="keyboard-theme-toggle"
+        className="theme-toggle-button"
         onClick={() => setIsDarkMode((value) => !value)}
         aria-pressed={isDarkMode}
         aria-label={themeButtonTitle}

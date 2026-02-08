@@ -1,12 +1,9 @@
-import { createElement } from "react"
-import { createRoot } from "react-dom/client"
-
 import * as packageInfo from "../package.json"
 import { App } from "./App"
 import { githubCornerHTML } from "./lib/githubCorner"
-
 import "./style.css"
-import "./tailwind.css"
+import { createElement } from "react"
+import { createRoot } from "react-dom/client"
 
 function main() {
   let cornerDiv = document.createElement("div")

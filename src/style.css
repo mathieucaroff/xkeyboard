@@ -1,3 +1,92 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  @font-face {
+    font-family: "RobotoFont";
+    src: url("../asset/typeface/Roboto.ttf") format("truetype");
+  }
+
+  @font-face {
+    font-family: "PrismaFont";
+    src: url("../asset/typeface/Prisma.ttf") format("truetype");
+  }
+
+  html {
+    --foreground-color: #000;
+    --background-color: #fff;
+    --surface-color: #f6f6f6;
+    --border-color: #1b1b1b;
+    --muted-color: #6b6b6b;
+    color-scheme: light;
+    font-family: RobotoFont, "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+    background-color: var(--background-color);
+    color: var(--foreground-color);
+  }
+
+  html.dark {
+    --foreground-color: #fff;
+    --background-color: #111;
+    --surface-color: #1a1a1a;
+    --border-color: #f0f0f0;
+    --muted-color: #c7c7c7;
+    color-scheme: dark;
+  }
+
+  h1 {
+    font-family: PrismaFont;
+    font-size: 55px;
+    font-weight: 400;
+    margin: 0;
+  }
+}
+
+@layer components {
+  .os-tabs .ant-tabs-tab {
+    background-color: var(--surface-color);
+    border: 1px solid var(--border-color);
+    border-bottom: 0;
+    color: var(--foreground-color);
+    font-weight: 600;
+    margin-right: 8px;
+    padding: 8px 14px;
+  }
+
+  .os-tabs .ant-tabs-tab-active {
+    background-color: var(--foreground-color);
+    color: var(--background-color);
+  }
+
+  .os-tabs .ant-tabs-ink-bar {
+    background-color: var(--foreground-color);
+    height: 3px;
+  }
+
+  .theme-toggle-button {
+    position: absolute;
+    top: 16px;
+    right: 96px;
+    z-index: 10;
+    height: 48px;
+    width: 48px;
+    padding: 0;
+    border-radius: 9999px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background-color: var(--surface-color);
+    color: var(--foreground-color);
+    border: 1px solid var(--border-color);
+  }
+
+  .theme-toggle-button:hover,
+  .theme-toggle-button:focus-visible {
+    background-color: var(--foreground-color);
+    color: var(--background-color);
+  }
+}
+
 .ant-tabs-top > .ant-tabs-nav {
   margin-bottom: 0;
 }

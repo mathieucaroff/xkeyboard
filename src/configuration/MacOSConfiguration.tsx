@@ -1,5 +1,5 @@
-import { getMacOSKeyCode } from "../getKeyName"
 import { ConfigurationTemplate } from "../components/ConfigurationTemplate"
+import { getMacOSKeyCode } from "../getKeyName"
 
 export interface MacOSConfigurationProps {
   keyboard: Keyboard

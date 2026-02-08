@@ -1,5 +1,5 @@
-import { Dispatch, SetStateAction, useEffect, useState } from "react"
 import { Checkbox, Input, Select } from "antd"
+import { Dispatch, SetStateAction, useEffect, useState } from "react"
 
 const QWERTY = [
   "qwerty",
