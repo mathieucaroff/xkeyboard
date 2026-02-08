@@ -53,7 +53,7 @@ export function ConfigurationTemplate(props: ConfigurationTemplateProps) {
   }
 
   return (
-    <div className="rounded border border-black p-2 my-4 overflow-x-auto">
+    <div className="overflow-x-auto rounded border border-black p-2">
       <div className="mb-3 mr-10">
         <h3 className="text-xl font-semibold tracking-tight">{title}</h3>
       </div>
@@ -77,10 +77,7 @@ export function ConfigurationTemplate(props: ConfigurationTemplateProps) {
           className="!border !border-current"
           onClick={handleDownload}
         >
-          Download{" "}
-          <code className="rounded bg-[color:var(--foreground-color)] px-1 py-0.5 text-[color:var(--background-color)]">
-            {filename}
-          </code>
+          Download <code className="-mb-0.5 rounded py-0.5">{filename}</code>
           <DownloadIcon />
         </Button>
       </div>

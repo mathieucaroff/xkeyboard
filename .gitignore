@@ -8,5 +8,5 @@ dist/
 
 !.editorconfig
 !.gitignore
-!.prettierrc
+!.prettier*
 !.yarnrc.yml

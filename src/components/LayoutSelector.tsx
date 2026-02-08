@@ -1,4 +1,4 @@
-import { Dispatch, SetStateAction, useState } from "react"
+import { Dispatch, SetStateAction, useEffect, useState } from "react"
 import { Checkbox, Input, Select } from "antd"
 
 const QWERTY = [
@@ -218,49 +218,55 @@ export function LayoutSelector(prop: LayoutSelectorProp) {
     useState<Complexity>("simple")
   let [keyboardSelectValue, setKeyboardSelectValue] = useState("other")
 
+  let handleKeyboardSelectValue = (value: string) => {
+    setKeyboardSelectValue(value)
+
+    let selection = value.toUpperCase()
+    let [name, longName, text, complexity, keyboardHasLSGT] = ({
+      QWERTY,
+      AZERTY,
+      AZERTYFULL,
+      ASSET2025,
+      ASSET2025FULL,
+      OTHER: [
+        keyboardName,
+        keyboardLongName,
+        keyboardText,
+        keyboardComplexity,
+        keyboardKind,
+      ],
+    }[selection] ?? ["", "", "", "simple", "LSGT"]) as [
+      string,
+      string,
+      string,
+      Complexity,
+      HasLSGT,
+    ]
+    setKeyboardName(name)
+    setKeyboardLongName(longName)
+    setKeyboardComplexity(complexity)
+    if (keyboardKind === "TypeMatrix" && keyboardHasLSGT === "LSGT") {
+      text = removeLSGT(text, complexity)
+      keyboardHasLSGT = "noLSGT"
+    }
+    setHasLSGT(keyboardHasLSGT)
+    setKeyboardText(text)
+    setKeyboardLayout({
+      complexity,
+      characterTable: parseKeyboardText(text, complexity),
+    })
+  }
+
+  useEffect(() => {
+    handleKeyboardSelectValue("Qwerty")
+  }, [])
+
   return (
     <>
       <div className="mt-6">Keyboard Layout</div>
       <div className="flex flex-wrap gap-2">
         <Select
-          onChange={(value) => {
-            setKeyboardSelectValue(value)
-
-            let selection = value.toUpperCase()
-            let [name, longName, text, complexity, keyboardHasLSGT] = ({
-              QWERTY,
-              AZERTY,
-              AZERTYFULL,
-              ASSET2025,
-              ASSET2025FULL,
-              OTHER: [
-                keyboardName,
-                keyboardLongName,
-                keyboardText,
-                keyboardComplexity,
-                keyboardKind,
-              ],
-            }[selection] ?? ["", "", "", "simple", "LSGT"]) as [
-              string,
-              string,
-              string,
-              Complexity,
-              HasLSGT,
-            ]
-            setKeyboardName(name)
-            setKeyboardLongName(longName)
-            setKeyboardComplexity(complexity)
-            if (keyboardKind === "TypeMatrix" && keyboardHasLSGT === "LSGT") {
-              text = removeLSGT(text, complexity)
-              keyboardHasLSGT = "noLSGT"
-            }
-            setHasLSGT(keyboardHasLSGT)
-            setKeyboardText(text)
-            setKeyboardLayout({
-              complexity,
-              characterTable: parseKeyboardText(text, complexity),
-            })
-          }}
+          onChange={handleKeyboardSelectValue}
           value={keyboardSelectValue}
           className="w-[150px]"
           options={[

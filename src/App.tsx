@@ -63,8 +63,8 @@ export function App() {
           setHasNumpad,
         }}
       />
-      <KeyboardView keyboard={keyboard} />
-      <div className="mt-6">Layout name</div>
+      <KeyboardView className="mt-4" keyboard={keyboard} />
+      <div className="mt-4">Layout name</div>
       <Input
         value={keyboardName}
         onChange={(ev) => {
@@ -73,7 +73,7 @@ export function App() {
         className="w-[300px]"
         placeholder={KEYBOARD_DEFAULT_NAME}
       />
-      <div className="mt-6">Long layout name</div>
+      <div className="mt-4">Long layout name</div>
       <Input
         value={keyboardLongName}
         onChange={(ev) => {

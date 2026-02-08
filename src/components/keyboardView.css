@@ -1,0 +1,40 @@
+.keyboard__key {
+  width: 37px;
+  border: solid 1px;
+  text-align: center;
+  white-space: nowrap;
+  line-height: normal;
+  box-sizing: content-box;
+}
+
+.keyboard__key--pressed {
+  background-color: #d0d0d0;
+}
+
+.keyboard__miniText {
+  font-size: 8px;
+  padding-bottom: 10px;
+}
+
+.keyboard__offset--Basic--1 { width: 52px; }
+.keyboard__offset--Basic--2 { width: 68px; }
+.keyboard__offset--Basic--3.keyboard__offset--noLSGT { width: 83px; }
+.keyboard__offset--Basic--3.keyboard__offset--LSGT { width: 40px; }
+
+.keyboard__key--Basic--0--0 { width: 32px; max-width: 32px; }
+.keyboard__key--TypeMatrix--0--0 { width: 40px; }
+
+.keyboard__offset--TypeMatrix--0 { width: 40px; max-width: 40px; }
+.keyboard__offset--TypeMatrix--1 { width: 40px; max-width: 40px; }
+.keyboard__offset--TypeMatrix--2 { width: 40px; max-width: 40px; border-bottom: 0; }
+.keyboard__offset--TypeMatrix--3 { width: 40px; max-width: 40px; border-top: 0; }
+
+.keyboard__centralKey--TypeMatrix--0 { width: 40px; max-width: 40px; }
+.keyboard__centralKey--TypeMatrix--1 { width: 40px; max-width: 40px; }
+.keyboard__centralKey--TypeMatrix--2 { width: 40px; max-width: 40px; border-bottom: 0; }
+.keyboard__centralKey--TypeMatrix--3 { width: 40px; max-width: 40px; border-top: 0; }
+
+.keyboard__character {
+  display: inline-block;
+  width: 18px;
+}

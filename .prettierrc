@@ -1,4 +1,5 @@
 {
   "semi": false,
-  "quoteProps": "consistent"
+  "quoteProps": "consistent",
+  "plugins": ["prettier-plugin-tailwindcss"]
 }

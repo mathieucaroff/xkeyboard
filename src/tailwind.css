@@ -3,33 +3,33 @@
 @tailwind utilities;
 
 @layer base {
-    @font-face {
-        font-family: "RobotoFont";
-        src: url("../asset/typeface/Roboto.ttf") format("truetype");
-    }
+  @font-face {
+    font-family: "RobotoFont";
+    src: url("../asset/typeface/Roboto.ttf") format("truetype");
+  }
 
-    @font-face {
-        font-family: "PrismaFont";
-        src: url("../asset/typeface/Prisma.ttf") format("truetype");
-    }
+  @font-face {
+    font-family: "PrismaFont";
+    src: url("../asset/typeface/Prisma.ttf") format("truetype");
+  }
 
-    html {
-        --foreground-color: #000;
-        --background-color: #fff;
-        font-family: RobotoFont, "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
-        background-color: var(--background-color);
-        color: var(--foreground-color);
-    }
+  html {
+    --foreground-color: #000;
+    --background-color: #fff;
+    font-family: RobotoFont, "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+    background-color: var(--background-color);
+    color: var(--foreground-color);
+  }
 
-    html.dark {
-        --foreground-color: #fff;
-        --background-color: #111;
-    }
+  html.dark {
+    --foreground-color: #fff;
+    --background-color: #111;
+  }
 
-    h1 {
-        font-family: PrismaFont;
-        font-size: 55px;
-        font-weight: 400;
-        margin: 0;
-    }
+  h1 {
+    font-family: PrismaFont;
+    font-size: 55px;
+    font-weight: 400;
+    margin: 0;
+  }
 }

@@ -83,6 +83,7 @@ ${configurationLineArray.join("\n")}
           <pre className="m-0 p-0">{`setxkbmap us ${keyboard.defaultedName}`}</pre>
         </li>
         <li>
+          For the GNOME desktop environment:
           <pre className="m-0 p-0">{`gsettings set org.gnome.desktop.input-sources sources "[('xkb', 'us+${keyboard.name}')]"`}</pre>
         </li>
       </ul>

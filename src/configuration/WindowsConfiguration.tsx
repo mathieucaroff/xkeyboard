@@ -136,8 +136,9 @@ ENDKBD
 
   const warning = (
     <>
-      Remember that the file must be saved with UTF-16 (LE) encoding and CRLF
-      line endings.
+      If you copy the layout, remember that the file must be saved with UTF-16
+      (LE) encoding and CRLF line endings. The file download uses the right
+      encoding and line endings.
     </>
   )
 
