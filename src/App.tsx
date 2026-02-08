@@ -1,15 +1,18 @@
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { LinuxConfiguration } from "./configuration/LinuxConfiguration"
 import { MacOSConfiguration } from "./configuration/MacOSConfiguration"
 import { LayoutSelector } from "./components/LayoutSelector"
-import { Input, Tabs } from "antd"
+import { Button, ConfigProvider, Input, Tabs, theme } from "antd"
 import { KeyboardView } from "./components/KeyboardView"
 import { WindowsConfiguration } from "./configuration/WindowsConfiguration"
+import { MoonIcon, SunIcon } from "./icon/ThemeIcons"
 
 export const KEYBOARD_DEFAULT_NAME = "layout"
 export const KEYBOARD_DEFAULT_LONG_NAME = "Custom Keyboard Layout"
 
 export function App() {
+  const { defaultAlgorithm, darkAlgorithm } = theme
+  let [isDarkMode, setIsDarkMode] = useState(false)
   let [keyboardName, setKeyboardName] = useState("")
   let [keyboardLongName, setKeyboardLongName] = useState("")
   let [keyboardLayout, setKeyboardLayout] = useState<KeyboardLayout>(() => ({
@@ -44,8 +47,34 @@ export function App() {
     return { key: os, label: os, children: <Component keyboard={keyboard} /> }
   })
 
+  useEffect(() => {
+    document.documentElement.classList.toggle("dark", isDarkMode)
+  }, [isDarkMode])
+
+  const iconProps = { className: "h-5 w-5" }
+  const themeButtonTitle = isDarkMode
+    ? "Switch to light mode"
+    : "Switch to dark mode"
+
   return (
-    <>
+    <ConfigProvider
+      theme={{
+        algorithm: isDarkMode ? darkAlgorithm : defaultAlgorithm,
+        components: {
+          Tabs: {},
+        },
+      }}
+    >
+      <Button
+        size="large"
+        className="keyboard-theme-toggle"
+        onClick={() => setIsDarkMode((value) => !value)}
+        aria-pressed={isDarkMode}
+        aria-label={themeButtonTitle}
+        title={themeButtonTitle}
+      >
+        {isDarkMode ? <SunIcon {...iconProps} /> : <MoonIcon {...iconProps} />}
+      </Button>
       <LayoutSelector
         {...{
           setKeyboardLayout,
@@ -81,7 +110,11 @@ export function App() {
         }}
         className="w-[300px]"
       />
-      <Tabs className="mt-6" type="card" items={configurationTabs} />
-    </>
+      <Tabs
+        className="keyboard-tabs mt-6"
+        type="card"
+        items={configurationTabs}
+      />
+    </ConfigProvider>
   )
 }

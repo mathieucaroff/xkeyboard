@@ -53,7 +53,7 @@ export function ConfigurationTemplate(props: ConfigurationTemplateProps) {
   }
 
   return (
-    <div className="overflow-x-auto rounded border border-black p-2">
+    <div className="overflow-x-auto rounded border border-[color:var(--border-color)] bg-[color:var(--surface-color)] p-2">
       <div className="mb-3 mr-10">
         <h3 className="text-xl font-semibold tracking-tight">{title}</h3>
       </div>
@@ -81,7 +81,7 @@ export function ConfigurationTemplate(props: ConfigurationTemplateProps) {
           <DownloadIcon />
         </Button>
       </div>
-      <div className="my-4 h-px bg-black" />
+      <div className="mb-2 mt-3 h-px bg-[color:var(--border-color)]" />
       <pre className="[tab-size:8]">{keyboardConfigText}</pre>
     </div>
   )
