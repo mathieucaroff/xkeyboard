@@ -1,3 +1,17 @@
 .ant-tabs-top > .ant-tabs-nav {
   margin-bottom: 0;
 }
+
+.ant-tabs-top > .ant-tabs-nav .ant-tabs-tab {
+  border-color: var(--border-color);
+  border-bottom-width: 0;
+}
+
+.ant-tabs-top > .ant-tabs-nav .ant-tabs-tab .ant-tabs-tab-btn {
+  color: var(--foreground-color);
+
+  &[aria-selected="true"] {
+    text-decoration: underline;
+    text-decoration-thickness: 2px;
+  }
+}

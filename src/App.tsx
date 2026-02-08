@@ -1,11 +1,11 @@
-import { useEffect, useState } from "react"
+import { KeyboardView } from "./components/KeyboardView"
+import { LayoutSelector } from "./components/LayoutSelector"
 import { LinuxConfiguration } from "./configuration/LinuxConfiguration"
 import { MacOSConfiguration } from "./configuration/MacOSConfiguration"
-import { LayoutSelector } from "./components/LayoutSelector"
-import { Button, ConfigProvider, Input, Tabs, theme } from "antd"
-import { KeyboardView } from "./components/KeyboardView"
 import { WindowsConfiguration } from "./configuration/WindowsConfiguration"
 import { MoonIcon, SunIcon } from "./icon/ThemeIcons"
+import { Button, ConfigProvider, Input, Tabs, theme } from "antd"
+import { useEffect, useState } from "react"
 
 export const KEYBOARD_DEFAULT_NAME = "layout"
 export const KEYBOARD_DEFAULT_LONG_NAME = "Custom Keyboard Layout"
@@ -110,11 +110,7 @@ export function App() {
         }}
         className="w-[300px]"
       />
-      <Tabs
-        className="keyboard-tabs mt-6"
-        type="card"
-        items={configurationTabs}
-      />
+      <Tabs className="os-tabs mt-6" type="card" items={configurationTabs} />
     </ConfigProvider>
   )
 }

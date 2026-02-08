@@ -1,6 +1,6 @@
+import { ConfigurationTemplate } from "../components/ConfigurationTemplate"
 import { getKeyName } from "../getKeyName"
 import { getSymbolName } from "../symbol/symbolTable"
-import { ConfigurationTemplate } from "../components/ConfigurationTemplate"
 
 function trimEmptyStringsFromArrayEnd(array: string[]) {
   while (array[array.length - 1] === "") {
@@ -74,17 +74,17 @@ ${configurationLineArray.join("\n")}
       <div className="mt-6">Useful commands:</div>
       <ul className="m-0 pt-0">
         <li>
-          <pre className="m-0 p-0">vim /usr/share/X11/xkb/symbols/us</pre>
+          <pre className="m-0 p-0 ml-2">vim /usr/share/X11/xkb/symbols/us</pre>
         </li>
         <li>
-          <pre className="m-0 p-0">setxkbmap -print -verbose 10</pre>
+          <pre className="m-0 p-0 ml-2">setxkbmap -print -verbose 10</pre>
         </li>
         <li>
-          <pre className="m-0 p-0">{`setxkbmap us ${keyboard.defaultedName}`}</pre>
+          <pre className="m-0 p-0 ml-2">{`setxkbmap us ${keyboard.defaultedName}`}</pre>
         </li>
         <li>
           For the GNOME desktop environment:
-          <pre className="m-0 p-0">{`gsettings set org.gnome.desktop.input-sources sources "[('xkb', 'us+${keyboard.name}')]"`}</pre>
+          <pre className="m-0 p-0 ml-2">{`gsettings set org.gnome.desktop.input-sources sources "[('xkb', 'us+${keyboard.name}')]"`}</pre>
         </li>
       </ul>
     </ConfigurationTemplate>

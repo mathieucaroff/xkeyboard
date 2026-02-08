@@ -43,12 +43,7 @@
 }
 
 @layer components {
-  .keyboard-tabs .ant-tabs-nav::before {
-    border-bottom: 2px solid var(--border-color);
-    opacity: 0.8;
-  }
-
-  .keyboard-tabs .ant-tabs-tab {
+  .os-tabs .ant-tabs-tab {
     background-color: var(--surface-color);
     border: 1px solid var(--border-color);
     border-bottom: 0;
@@ -58,12 +53,12 @@
     padding: 8px 14px;
   }
 
-  .keyboard-tabs .ant-tabs-tab-active {
+  .os-tabs .ant-tabs-tab-active {
     background-color: var(--foreground-color);
     color: var(--background-color);
   }
 
-  .keyboard-tabs .ant-tabs-ink-bar {
+  .os-tabs .ant-tabs-ink-bar {
     background-color: var(--foreground-color);
     height: 3px;
   }
