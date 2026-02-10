@@ -19,6 +19,8 @@
     --surface-color: #f6f6f6;
     --border-color: #1b1b1b;
     --muted-color: #b5b5b5;
+    --link-color: #1d4ed8;
+    --link-hover-color: #1e40af;
     color-scheme: light;
 
     /* light-dark theme common properties */
@@ -34,6 +36,8 @@
     --surface-color: #1a1a1a;
     --border-color: #f0f0f0;
     --muted-color: #949494;
+    --link-color: #93c5fd;
+    --link-hover-color: #bfdbfe;
     color-scheme: dark;
   }
 
@@ -46,6 +50,19 @@
 
   p + p {
     margin-top: 1em;
+  }
+
+  a {
+    color: var(--link-color);
+    text-decoration: underline;
+    text-underline-offset: 2px;
+  }
+
+  a:hover,
+  a:focus-visible {
+    color: var(--link-hover-color);
+    text-decoration: underline;
+    text-underline-offset: 2px;
   }
 }
 

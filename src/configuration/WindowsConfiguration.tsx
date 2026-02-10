@@ -64,10 +64,8 @@ export function WindowsConfiguration(props: WindowsConfigurationProp) {
       if (!key) {
         return
       }
-      const c0 = group[0] || ""
-      const c1 = group[1] || ""
-      const c6 = group[2] || ""
-      const c7 = group[3] || ""
+
+      const [c0, c1, c6, c7] = group.map((c) => c || "")
 
       if (!c0 && !c1 && !c6 && !c7) {
         return
@@ -76,22 +74,11 @@ export function WindowsConfiguration(props: WindowsConfigurationProp) {
       const vk = deriveVk(group, key.vk)
       const cap = c0 === " " ? "0" : c6 || c7 ? "5" : "1"
 
-      const outputValueListText = [
-        formatOutputValue(c0),
-        formatOutputValue(c1),
-        formatOutputValue(c6),
-        formatOutputValue(c7),
-      ].join("\t")
-
-      const comment = [
-        formatCommentName(c0),
-        formatCommentName(c1),
-        formatCommentName(c6),
-        formatCommentName(c7),
-      ].join(", ")
+      const characters = [c0, c1, c6, c7].map(formatOutputValue).join(", ")
+      const comment = [c0, c1, c6, c7].map(formatCommentName).join(", ")
 
       contentTable.push(
-        `${key.sc}\t${vk}\t${cap}\t${outputValueListText}\t\t// ${comment}`,
+        `${key.sc}\t${vk}\t${cap}\t${characters}\t\t// ${comment}`,
       )
     })
   })
@@ -151,6 +138,16 @@ ENDKBD
       fileEncoding="utf-16le"
       keyboardConfigText={configText}
       warning={warning}
-    />
+    >
+      <p>
+        This configuration format is used by{" "}
+        <a href="https://www.google.com/search?q=Microsoft+Keyboard+Layout+Creator">
+          Microsoft Keyboard Layout Creator
+        </a>{" "}
+        (MSKLC). MSKLC can open, edit and most importantly, compile this
+        configuration into a set of `.msi` and `.exe` files which install the
+        keyboard layout into Windows.
+      </p>
+    </ConfigurationTemplate>
   )
 }
