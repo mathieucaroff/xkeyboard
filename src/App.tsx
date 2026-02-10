@@ -11,12 +11,43 @@ import { MoonIcon, SunIcon } from "./icon/ThemeIcons"
 export const KEYBOARD_DEFAULT_NAME = "layout"
 export const KEYBOARD_DEFAULT_LONG_NAME = "Custom Keyboard Layout"
 
+const themeStorageKey = "xkeyboard-theme"
+const tabStorageKey = "xkeyboard-config-tab"
+
 const layoutNameHelp = `The layout name is used in the system and as the filename for the generated configuration files. It should only contain letters, digits, underscores, or hyphens, and should not include file extensions. If left empty, it will default to "${KEYBOARD_DEFAULT_NAME}".`
 const longLayoutNameHelp = `The long layout name is used as the display name for the keyboard layout. It can contain any characters. If left empty, it will default to "${KEYBOARD_DEFAULT_LONG_NAME}".`
 
+function ignoreErrors<T>(action: () => T, fallback: T) {
+  try {
+    return action()
+  } catch {
+    return fallback
+  }
+}
+
 export function App() {
   const { defaultAlgorithm, darkAlgorithm } = theme
-  let [isDarkMode, setIsDarkMode] = useState(false)
+  const configurationOs = ["Linux", "MacOS", "Windows"] as const
+  const configurationComponents = {
+    Linux: LinuxConfiguration,
+    MacOS: MacOSConfiguration,
+    Windows: WindowsConfiguration,
+  }
+  let [isDarkMode, setIsDarkMode] = useState(() =>
+    ignoreErrors(() => localStorage.getItem(themeStorageKey) === "dark", false),
+  )
+  let [activeConfigTab, setActiveConfigTab] = useState(() =>
+    ignoreErrors(() => {
+      let stored = localStorage.getItem(tabStorageKey)
+      if (
+        stored &&
+        configurationOs.includes(stored as (typeof configurationOs)[number])
+      ) {
+        return stored
+      }
+      return configurationOs[0]
+    }, configurationOs[0]),
+  )
   let [keyboardName, setKeyboardName] = useState("")
   let [keyboardLongName, setKeyboardLongName] = useState("")
   let [keyboardLayout, setKeyboardLayout] = useState<KeyboardLayout>(() => ({
@@ -40,12 +71,6 @@ export function App() {
     hasNumpad,
   }
 
-  const configurationOs = ["Linux", "MacOS", "Windows"] as const
-  const configurationComponents = {
-    Linux: LinuxConfiguration,
-    MacOS: MacOSConfiguration,
-    Windows: WindowsConfiguration,
-  }
   let configurationTabs = configurationOs.map((os) => {
     let Component = configurationComponents[os]
     return { key: os, label: os, children: <Component keyboard={keyboard} /> }
@@ -53,7 +78,16 @@ export function App() {
 
   useEffect(() => {
     document.documentElement.classList.toggle("dark", isDarkMode)
+    ignoreErrors(() => {
+      localStorage.setItem(themeStorageKey, isDarkMode ? "dark" : "light")
+    }, undefined)
   }, [isDarkMode])
+
+  useEffect(() => {
+    ignoreErrors(() => {
+      localStorage.setItem(tabStorageKey, activeConfigTab)
+    }, undefined)
+  }, [activeConfigTab])
 
   const iconProps = { className: "h-5 w-5" }
   const themeButtonTitle = isDarkMode
@@ -131,6 +165,8 @@ export function App() {
         type="card"
         tabBarGutter={5}
         items={configurationTabs}
+        activeKey={activeConfigTab}
+        onChange={setActiveConfigTab}
       />
     </ConfigProvider>
   )
