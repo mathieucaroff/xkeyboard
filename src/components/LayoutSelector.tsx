@@ -1,5 +1,6 @@
 import { Checkbox, Input, Select } from "antd"
 import { Dispatch, SetStateAction, useEffect, useState } from "react"
+import { HelpTooltip } from "./HelpTooltip"
 
 const QWERTY = [
   "qwerty",
@@ -297,6 +298,18 @@ export function LayoutSelector(prop: LayoutSelectorProp) {
             },
           ]}
         />
+        <HelpTooltip amongInputs className="ml-0 mr-1">
+          <p>
+            Choose "simple" if your layout only has different characters for
+            upper and lower cases, and "complex" if it also has different
+            characters for AltGr or similar modifier keys.
+          </p>
+
+          <p>
+            The complexity setting affects how the keyboard text is parsed, but
+            does not affect the generated configuration format.
+          </p>
+        </HelpTooltip>
         <Select
           onChange={(name: KeyboardKind) => {
             setKeyboardKind(name)
@@ -330,6 +343,12 @@ export function LayoutSelector(prop: LayoutSelectorProp) {
         >
           Has LSGT key
         </Checkbox>
+        <HelpTooltip>
+          This checkbox controls the presence of the "LSGT" (less/greater) key,
+          which is located between the left Shift and Z keys on many European
+          keyboards. When checked, the parser will expect an additional key in
+          the leftmost position of the bottom row.
+        </HelpTooltip>
       </div>
       <div className="mt-2">
         <Input.TextArea

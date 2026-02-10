@@ -1,14 +1,18 @@
+import { Button, ConfigProvider, Input, Tabs, theme } from "antd"
+import { useEffect, useState } from "react"
+import { HelpTooltip } from "./components/HelpTooltip"
 import { KeyboardView } from "./components/KeyboardView"
 import { LayoutSelector } from "./components/LayoutSelector"
 import { LinuxConfiguration } from "./configuration/LinuxConfiguration"
 import { MacOSConfiguration } from "./configuration/MacOSConfiguration"
 import { WindowsConfiguration } from "./configuration/WindowsConfiguration"
 import { MoonIcon, SunIcon } from "./icon/ThemeIcons"
-import { Button, ConfigProvider, Input, Tabs, theme } from "antd"
-import { useEffect, useState } from "react"
 
 export const KEYBOARD_DEFAULT_NAME = "layout"
 export const KEYBOARD_DEFAULT_LONG_NAME = "Custom Keyboard Layout"
+
+const layoutNameHelp = `The layout name is used in the system and as the filename for the generated configuration files. It should only contain letters, digits, underscores, or hyphens, and should not include file extensions. If left empty, it will default to "${KEYBOARD_DEFAULT_NAME}".`
+const longLayoutNameHelp = `The long layout name is used as the display name for the keyboard layout. It can contain any characters. If left empty, it will default to "${KEYBOARD_DEFAULT_LONG_NAME}".`
 
 export function App() {
   const { defaultAlgorithm, darkAlgorithm } = theme
@@ -98,7 +102,10 @@ export function App() {
         }}
       />
       <KeyboardView className="mt-4" keyboard={keyboard} />
-      <div className="mt-4">Layout name</div>
+      <div className="mt-4">
+        Layout name
+        <HelpTooltip children={layoutNameHelp} />
+      </div>
       <Input
         value={keyboardName}
         onChange={(ev) => {
@@ -107,15 +114,24 @@ export function App() {
         className="w-[300px]"
         placeholder={KEYBOARD_DEFAULT_NAME}
       />
-      <div className="mt-4">Long layout name</div>
+      <div className="mt-4">
+        Long layout name
+        <HelpTooltip children={longLayoutNameHelp} />
+      </div>
       <Input
         value={keyboardLongName}
         onChange={(ev) => {
           setKeyboardLongName(ev.currentTarget.value)
         }}
         className="w-[300px]"
+        placeholder={KEYBOARD_DEFAULT_LONG_NAME}
       />
-      <Tabs className="os-tabs mt-6" type="card" items={configurationTabs} />
+      <Tabs
+        className="os-tabs mt-6"
+        type="card"
+        tabBarGutter={5}
+        items={configurationTabs}
+      />
     </ConfigProvider>
   )
 }

@@ -1,8 +1,7 @@
-import { KEYBOARD_DEFAULT_NAME } from "../App"
-import { CopyIcon, DownloadIcon } from "../icon/ActionIcons"
-import { createTextBlob, normalizeNewlines } from "../lib/textEncoding"
 import { Button } from "antd"
 import type { ReactNode } from "react"
+import { CopyIcon, DownloadIcon } from "../icon/ActionIcons"
+import { createTextBlob, normalizeNewlines } from "../lib/textEncoding"
 
 export interface ConfigurationTemplateProps {
   title: string
@@ -53,7 +52,7 @@ export function ConfigurationTemplate(props: ConfigurationTemplateProps) {
   }
 
   return (
-    <div className="overflow-x-auto rounded border border-[color:var(--border-color)] bg-[color:var(--surface-color)] p-2">
+    <div className="configuration-frame overflow-x-auto rounded border border-[color:var(--border-color)] bg-[color:var(--surface-color)] hover:border-[color:var(--primary-color)] p-2">
       <div className="mb-3 mr-10">
         <h3 className="text-xl font-semibold tracking-tight">{title}</h3>
       </div>
@@ -81,7 +80,7 @@ export function ConfigurationTemplate(props: ConfigurationTemplateProps) {
           <DownloadIcon />
         </Button>
       </div>
-      <div className="mb-2 mt-3 h-px bg-[color:var(--border-color)]" />
+      <div className="divider mb-2 mt-3 h-px bg-[color:var(--border-color)]" />
       <pre className="[tab-size:8]">{keyboardConfigText}</pre>
     </div>
   )

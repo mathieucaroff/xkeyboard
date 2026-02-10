@@ -5,10 +5,10 @@
   white-space: nowrap;
   line-height: normal;
   box-sizing: content-box;
-}
 
-.keyboard__key--pressed {
-  background-color: #d0d0d0;
+  &:hover {
+    border-color: var(--primary-color);
+  }
 }
 
 .keyboard__miniText {
@@ -37,4 +37,8 @@
 .keyboard__character {
   display: inline-block;
   width: 18px;
+}
+
+.keyboard__character--2, .keyboard__character--3 {
+  color: var(--muted-color);
 }

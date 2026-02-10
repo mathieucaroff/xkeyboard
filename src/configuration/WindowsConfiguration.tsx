@@ -96,6 +96,14 @@ export function WindowsConfiguration(props: WindowsConfigurationProp) {
     })
   })
 
+  const warning = (
+    <>
+      If you copy the layout, remember that the file must be saved with UTF-16
+      (LE) encoding and CRLF line endings. The file download uses the right
+      encoding and line endings.
+    </>
+  )
+
   const configText = `
 KBD	${keyboard.name}	"${keyboard.longName}"
 
@@ -133,14 +141,6 @@ LANGUAGENAMES
 
 ENDKBD
 `.slice(1, -1)
-
-  const warning = (
-    <>
-      If you copy the layout, remember that the file must be saved with UTF-16
-      (LE) encoding and CRLF line endings. The file download uses the right
-      encoding and line endings.
-    </>
-  )
 
   return (
     <ConfigurationTemplate

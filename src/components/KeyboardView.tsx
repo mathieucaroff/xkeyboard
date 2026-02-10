@@ -1,9 +1,32 @@
-import "./keyboardView.css"
 import { Fragment } from "react/jsx-runtime"
+import "./keyboardView.css"
 
 export interface KeyboardViewProp {
   className?: string
   keyboard: Keyboard
+}
+
+function KeyboardViewKey({ group }: { group: string[] }) {
+  return (
+    <>
+      <div>
+        <span className="keyboard__character keyboard__character--1">
+          {group[1]}
+        </span>
+        <span className="keyboard__character keyboard__character--3">
+          {group[3]}
+        </span>
+      </div>
+      <div>
+        <span className="keyboard__character keyboard__character--0">
+          {group[0]}
+        </span>
+        <span className="keyboard__character keyboard__character--2">
+          {group[2]}
+        </span>
+      </div>
+    </>
+  )
 }
 
 export function KeyboardView(prop: KeyboardViewProp) {
@@ -38,18 +61,7 @@ export function KeyboardView(prop: KeyboardViewProp) {
                     <td
                       className={`keyboard__key keyboard__key--${kind}--${m}--${k}`}
                     >
-                      <div>
-                        <span className="keyboard__character">{group[1]}</span>
-                        <span className="keyboard__character">
-                          {group[3] || ""}
-                        </span>
-                      </div>
-                      <div>
-                        <span className="keyboard__character">{group[0]}</span>
-                        <span className="keyboard__character">
-                          {group[2] || ""}
-                        </span>
-                      </div>
+                      <KeyboardViewKey group={group} />
                     </td>
                   }
                 </Fragment>

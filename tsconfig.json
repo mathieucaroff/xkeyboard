@@ -37,9 +37,6 @@
     "declaration": false,
     "declarationMap": false,
     "sourceMap": true,
-
-    // Path Mapping (if needed for cleaner imports)
-    "baseUrl": "./src"
   },
   "include": [
     "src/**/*"

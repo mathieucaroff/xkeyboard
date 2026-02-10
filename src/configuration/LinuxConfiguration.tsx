@@ -57,7 +57,7 @@ export function LinuxConfiguration(props: XConfigurationProp) {
   const configText = `
 default partial alphanumeric_keys modifier_keys
 
-xkb_symbols "${keyboard.name}" {
+xkb_symbols "${keyboard.defaultedName}" {
   name[Group1] = "${keyboard.longName}";
 
 ${configurationLineArray.join("\n")}
@@ -84,7 +84,7 @@ ${configurationLineArray.join("\n")}
         </li>
         <li>
           For the GNOME desktop environment:
-          <pre className="m-0 p-0 ml-2">{`gsettings set org.gnome.desktop.input-sources sources "[('xkb', 'us+${keyboard.name}')]"`}</pre>
+          <pre className="m-0 p-0 ml-2">{`gsettings set org.gnome.desktop.input-sources sources "[('xkb', 'us+${keyboard.defaultedName}')]"`}</pre>
         </li>
       </ul>
     </ConfigurationTemplate>
