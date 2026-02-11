@@ -2,6 +2,8 @@ import { Checkbox, Input, Select } from "antd"
 import { Dispatch, SetStateAction, useEffect, useState } from "react"
 import { HelpTooltip } from "./HelpTooltip"
 
+const layoutStorageKey = "xkeyboard-layout-editor"
+
 const QWERTY = [
   "qwerty",
   "Qwerty",
@@ -104,6 +106,40 @@ _ z x c v b k m , : / :.
   "complex",
   "LSGT",
 ] as const
+
+type StoredLayoutState = {
+  version: 1
+  keyboardText: string
+  keyboardComplexity: Complexity
+  keyboardSelectValue: string
+}
+
+function isStoredLayoutState(value: unknown): value is StoredLayoutState {
+  if (!value || typeof value !== "object") {
+    return false
+  }
+  const state = value as StoredLayoutState
+  return (
+    state.version === 1 &&
+    typeof state.keyboardText === "string" &&
+    (state.keyboardComplexity === "simple" ||
+      state.keyboardComplexity === "complex") &&
+    typeof state.keyboardSelectValue === "string"
+  )
+}
+
+function loadStoredLayoutState() {
+  try {
+    const raw = localStorage.getItem(layoutStorageKey)
+    if (!raw) {
+      return null
+    }
+    const parsed = JSON.parse(raw) as StoredLayoutState
+    return isStoredLayoutState(parsed) ? parsed : null
+  } catch {
+    return null
+  }
+}
 
 function parseKeyboardText(text: string, complexity: Complexity) {
   let groupSize = complexity === "simple" ? 2 : 4
@@ -259,8 +295,36 @@ export function LayoutSelector(prop: LayoutSelectorProp) {
   }
 
   useEffect(() => {
+    const storedState = loadStoredLayoutState()
+    if (storedState) {
+      setKeyboardText(storedState.keyboardText)
+      setKeyboardComplexity(storedState.keyboardComplexity)
+      setKeyboardSelectValue(storedState.keyboardSelectValue)
+      setKeyboardLayout({
+        complexity: storedState.keyboardComplexity,
+        characterTable: parseKeyboardText(
+          storedState.keyboardText,
+          storedState.keyboardComplexity,
+        ),
+      })
+      return
+    }
     handleKeyboardSelectValue("Qwerty")
   }, [])
+
+  useEffect(() => {
+    const payload: StoredLayoutState = {
+      version: 1,
+      keyboardText,
+      keyboardComplexity,
+      keyboardSelectValue,
+    }
+    try {
+      localStorage.setItem(layoutStorageKey, JSON.stringify(payload))
+    } catch {
+      // Ignore storage errors silently.
+    }
+  }, [keyboardText, keyboardComplexity, keyboardSelectValue])
 
   return (
     <>

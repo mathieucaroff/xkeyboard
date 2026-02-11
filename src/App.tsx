@@ -13,6 +13,7 @@ export const KEYBOARD_DEFAULT_LONG_NAME = "Custom Keyboard Layout"
 
 const themeStorageKey = "xkeyboard-theme"
 const tabStorageKey = "xkeyboard-config-tab"
+const configStorageKey = "xkeyboard-config"
 
 const layoutNameHelp = `The layout name is used in the system and as the filename for the generated configuration files. It should only contain letters, digits, underscores, or hyphens, and should not include file extensions. If left empty, it will default to "${KEYBOARD_DEFAULT_NAME}".`
 const longLayoutNameHelp = `The long layout name is used as the display name for the keyboard layout. It can contain any characters. If left empty, it will default to "${KEYBOARD_DEFAULT_LONG_NAME}".`
@@ -25,6 +26,50 @@ function ignoreErrors<T>(action: () => T, fallback: T) {
   }
 }
 
+type StoredConfig = {
+  version: 1
+  keyboardName: string
+  keyboardLongName: string
+  keyboardLayout: KeyboardLayout
+  keyboardKind: KeyboardKind
+  hasLSGT: HasLSGT
+  hasNavigationPad: HasNavigationPad
+  hasNumpad: HasNumpad
+}
+
+function isStoredConfig(value: unknown): value is StoredConfig {
+  if (!value || typeof value !== "object") {
+    return false
+  }
+  const config = value as StoredConfig
+  return (
+    config.version === 1 &&
+    typeof config.keyboardName === "string" &&
+    typeof config.keyboardLongName === "string" &&
+    config.keyboardLayout !== null &&
+    typeof config.keyboardLayout === "object" &&
+    (config.keyboardLayout.complexity === "simple" ||
+      config.keyboardLayout.complexity === "complex") &&
+    Array.isArray(config.keyboardLayout.characterTable) &&
+    (config.keyboardKind === "Basic" || config.keyboardKind === "TypeMatrix") &&
+    (config.hasLSGT === "LSGT" || config.hasLSGT === "noLSGT") &&
+    (config.hasNavigationPad === "NavigationPad" ||
+      config.hasNavigationPad === "noNavigationPad") &&
+    (config.hasNumpad === "Numpad" || config.hasNumpad === "noNumpad")
+  )
+}
+
+function loadStoredConfig() {
+  return ignoreErrors(() => {
+    const raw = localStorage.getItem(configStorageKey)
+    if (!raw) {
+      return null
+    }
+    const parsed = JSON.parse(raw) as StoredConfig
+    return isStoredConfig(parsed) ? parsed : null
+  }, null)
+}
+
 export function App() {
   const { defaultAlgorithm, darkAlgorithm } = theme
   const configurationOs = ["Linux", "MacOS", "Windows"] as const
@@ -33,6 +78,7 @@ export function App() {
     MacOS: MacOSConfiguration,
     Windows: WindowsConfiguration,
   }
+  const [storedConfig] = useState(() => loadStoredConfig())
   let [isDarkMode, setIsDarkMode] = useState(() =>
     ignoreErrors(() => localStorage.getItem(themeStorageKey) === "dark", false),
   )
@@ -48,17 +94,29 @@ export function App() {
       return configurationOs[0]
     }, configurationOs[0]),
   )
-  let [keyboardName, setKeyboardName] = useState("")
-  let [keyboardLongName, setKeyboardLongName] = useState("")
-  let [keyboardLayout, setKeyboardLayout] = useState<KeyboardLayout>(() => ({
-    complexity: "simple",
-    characterTable: [],
-  }))
-  let [keyboardKind, setKeyboardKind] = useState<KeyboardKind>("Basic")
-  let [hasNavigationPad, setHasNavigationPad] =
-    useState<HasNavigationPad>("noNavigationPad")
-  let [hasNumpad, setHasNumpad] = useState<HasNumpad>("noNumpad")
-  let [hasLSGT, setHasLSGT] = useState<HasLSGT>("noLSGT")
+  let [keyboardName, setKeyboardName] = useState(
+    () => storedConfig?.keyboardName ?? "",
+  )
+  let [keyboardLongName, setKeyboardLongName] = useState(
+    () => storedConfig?.keyboardLongName ?? "",
+  )
+  let [keyboardLayout, setKeyboardLayout] = useState<KeyboardLayout>(() =>
+    storedConfig?.keyboardLayout
+      ? storedConfig.keyboardLayout
+      : { complexity: "simple", characterTable: [] },
+  )
+  let [keyboardKind, setKeyboardKind] = useState<KeyboardKind>(
+    () => storedConfig?.keyboardKind ?? "Basic",
+  )
+  let [hasNavigationPad, setHasNavigationPad] = useState<HasNavigationPad>(
+    () => storedConfig?.hasNavigationPad ?? "noNavigationPad",
+  )
+  let [hasNumpad, setHasNumpad] = useState<HasNumpad>(
+    () => storedConfig?.hasNumpad ?? "noNumpad",
+  )
+  let [hasLSGT, setHasLSGT] = useState<HasLSGT>(
+    () => storedConfig?.hasLSGT ?? "noLSGT",
+  )
 
   let keyboard: Keyboard = {
     kind: keyboardKind,
@@ -88,6 +146,30 @@ export function App() {
       localStorage.setItem(tabStorageKey, activeConfigTab)
     }, undefined)
   }, [activeConfigTab])
+
+  useEffect(() => {
+    const payload: StoredConfig = {
+      version: 1,
+      keyboardName,
+      keyboardLongName,
+      keyboardLayout,
+      keyboardKind,
+      hasLSGT,
+      hasNavigationPad,
+      hasNumpad,
+    }
+    ignoreErrors(() => {
+      localStorage.setItem(configStorageKey, JSON.stringify(payload))
+    }, undefined)
+  }, [
+    keyboardName,
+    keyboardLongName,
+    keyboardLayout,
+    keyboardKind,
+    hasLSGT,
+    hasNavigationPad,
+    hasNumpad,
+  ])
 
   const iconProps = { className: "h-5 w-5" }
   const themeButtonTitle = isDarkMode
