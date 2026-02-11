@@ -1,4 +1,5 @@
-import { Fragment } from "react/jsx-runtime"
+import { useEffect, useState } from "react"
+import { KeyboardRow } from "./KeyboardRow"
 import "./keyboardView.css"
 
 export interface KeyboardViewProp {
@@ -6,67 +7,79 @@ export interface KeyboardViewProp {
   keyboard: Keyboard
 }
 
-function KeyboardViewKey({ group }: { group: string[] }) {
-  return (
-    <>
-      <div>
-        <span className="keyboard__character keyboard__character--1">
-          {group[1]}
-        </span>
-        <span className="keyboard__character keyboard__character--3">
-          {group[3]}
-        </span>
-      </div>
-      <div>
-        <span className="keyboard__character keyboard__character--0">
-          {group[0]}
-        </span>
-        <span className="keyboard__character keyboard__character--2">
-          {group[2]}
-        </span>
-      </div>
-    </>
-  )
-}
-
 export function KeyboardView(prop: KeyboardViewProp) {
   let { className, keyboard } = prop
   let { kind, layout, hasLSGT } = keyboard
+  let [pressedKeys, setPressedKeys] = useState<Set<string>>(() => new Set())
+
+  const normalizeKey = (key: string) => {
+    if (key === " " || key === "Spacebar" || key === "Space") {
+      return " "
+    }
+    if (key.length === 1) {
+      return key
+    }
+    return null
+  }
+
+  useEffect(() => {
+    const handleKeyDown = (event: KeyboardEvent) => {
+      const normalized = normalizeKey(event.key)
+      if (!normalized) {
+        return
+      }
+      setPressedKeys((current) => {
+        if (current.has(normalized)) {
+          return current
+        }
+        const next = new Set(current)
+        next.add(normalized)
+        return next
+      })
+    }
+
+    const handleKeyUp = (event: KeyboardEvent) => {
+      const normalized = normalizeKey(event.key)
+      if (!normalized) {
+        return
+      }
+      setPressedKeys((current) => {
+        if (!current.has(normalized)) {
+          return current
+        }
+        const next = new Set(current)
+        next.delete(normalized)
+        return next
+      })
+    }
+
+    const handleBlur = () => {
+      setPressedKeys(new Set())
+    }
+
+    window.addEventListener("keydown", handleKeyDown)
+    window.addEventListener("keyup", handleKeyUp)
+    window.addEventListener("blur", handleBlur)
+
+    return () => {
+      window.removeEventListener("keydown", handleKeyDown)
+      window.removeEventListener("keyup", handleKeyUp)
+      window.removeEventListener("blur", handleBlur)
+    }
+  }, [])
 
   return (
     <div className={`keyboard ${className ?? ""}`}>
       {layout.characterTable.map((row, k) => (
         <table key={k} className="border-separate">
           <tbody>
-            <tr>
-              {k !== 0 ? (
-                <td
-                  className={`keyboard__key keyboard__miniText keyboard__offset--${kind}--${k} keyboard__offset--${hasLSGT}`}
-                >
-                  {kind === "TypeMatrix"
-                    ? { [0]: "del", [1]: "tab", [2]: "shift", [3]: null }[k]
-                    : null}
-                </td>
-              ) : null}
-              {row.map((group, m) => (
-                <Fragment key={m}>
-                  {kind === "TypeMatrix" && m === (k === 0 ? 6 : 5) ? (
-                    <td
-                      className={`keyboard__key keyboard__miniText keyboard__centralKey--${kind}--${k}`}
-                    >
-                      {{ [0]: "del", [1]: "bksp", [2]: "enter", [3]: null }[k]}
-                    </td>
-                  ) : null}
-                  {
-                    <td
-                      className={`keyboard__key keyboard__key--${kind}--${m}--${k}`}
-                    >
-                      <KeyboardViewKey group={group} />
-                    </td>
-                  }
-                </Fragment>
-              ))}
-            </tr>
+            <KeyboardRow
+              rowIndex={k}
+              kind={kind}
+              hasLSGT={hasLSGT}
+              row={row}
+              pressedKeys={pressedKeys}
+            />
           </tbody>
         </table>
       ))}

@@ -5,10 +5,15 @@
   white-space: nowrap;
   line-height: normal;
   box-sizing: content-box;
+  transition: background-color 70ms ease;
 
   &:hover {
     border-color: var(--primary-color);
   }
+}
+
+.keyboard__key--active {
+  background-color: #cbe0ff;
 }
 
 .keyboard__miniText {
