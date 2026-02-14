@@ -5,187 +5,22 @@ export interface MacOSConfigurationProps {
   keyboard: Keyboard
 }
 
-interface KeyMapEntry {
-  code: number
-  output: string
-  name: string
-  special?: "lineBreak" | "comment"
-}
-
-const LINE_BREAK_ENTRY: KeyMapEntry = {
-  code: 0,
-  output: "",
-  name: "",
-  special: "lineBreak",
-}
-
-interface ModifierMap {
-  base: KeyMapEntry[][] // Renamed from 'anyOption' for clarity - stores base characters (no modifiers)
-  option: KeyMapEntry[][]
-  shift: KeyMapEntry[][]
-  shiftOption: KeyMapEntry[][] // Renamed from 'command' to be more descriptive
-}
-
-interface LeanModifierMapSet {
-  base: KeyMapEntry[]
-  option: KeyMapEntry[]
-  shift: KeyMapEntry[]
-  shiftOption: KeyMapEntry[]
-}
-
-/**
- * Escapes XML special characters
- */
-function escapeXml(text: string): string {
-  return text
-    .replace(/&/g, "&amp;")
-    .replace(/</g, "&lt;")
-    .replace(/>/g, "&gt;")
-    .replace(/"/g, "&quot;")
-}
-
-/**
- * Generates Unicode hex representation for characters
- */
-function getUnicodeOutput(character: string) {
-  if (!character) {
-    return { output: "", name: "" }
-  }
-
-  if (character.length === 1) {
-    const codePoint = character.codePointAt(0)!
-
-    // Handle special cases for macOS
-    switch (character) {
-      case " ":
-        return { output: "&#x0020;", name: "space" }
-      case "\t":
-        return { output: "&#x0009;", name: "tab" }
-      case "\n":
-        return { output: "&#x000A;", name: "LF" }
-      case "\r":
-        return { output: "&#x000D;", name: "CR" }
-      default:
-        break
-    }
-
-    if (
-      codePoint <= 0x7f &&
-      character.match(/[a-zA-Z0-9!@#$%^&*()_+\-=\[\]{};':",./<>?`~]/)
-    ) {
-      // For safe ASCII characters, use the character directly
-      const output = escapeXml(character)
-      const name = output.startsWith("&") ? character : ""
-      return { output: output, name }
-    } else {
-      // For Unicode characters or special ASCII, use Unicode hex
-      const output = `&#x${codePoint.toString(16).padStart(4, "0").toUpperCase()};`
-      return { output, name: character }
-    }
-  }
-  return { output: escapeXml(character), name: character }
-}
-
-function processEntryRow(row: KeyMapEntry[]) {
-  if (row.some((entry) => entry.name)) {
-    return row.map((entry) => entry.name || entry.output).join(", ")
-  }
-  return ""
+function escapeXML(text: string): string {
+  return text.replace(/[^0-9A-Za-z`~!@#$%^*()\-=_+:{};\[\]?,./ ]/g, (char) => {
+    return `&#x${char.codePointAt(0)!.toString(16).padStart(4, "0")};`
+  })
 }
 
 export function MacOSConfiguration(props: MacOSConfigurationProps) {
   const { keyboard } = props
   const { characterTable } = keyboard.layout
 
-  // Build the modifier maps
-  const modifierMaps: ModifierMap = {
-    base: [], // Base characters (no modifiers)
-    option: [],
-    shift: [],
-    shiftOption: [], // Renamed from 'command' for clarity
-  }
-
-  // Generate key mappings for each row
-  for (let row = 0; row < Math.min(5, characterTable.length); row++) {
-    const rowArray: KeyMapEntry[][] = [
-      (modifierMaps.base[row] = []),
-      (modifierMaps.shift[row] = []),
-      (modifierMaps.option[row] = []),
-      (modifierMaps.shiftOption[row] = []),
-    ]
-
-    let column = 0
-    while (column < (characterTable[row]?.length || 0)) {
-      const code = getMacOSKeyCode(
-        { row, column },
-        keyboard.kind === "Basic" ? keyboard.hasLSGT : "noLSGT",
-      )
-
-      if (code === null) {
-        column++
-        continue
-      }
-
-      characterTable[row]?.[column]?.forEach((char, index) => {
-        if (char) {
-          rowArray[index]!.push({
-            code,
-            ...getUnicodeOutput(char),
-          })
-        }
-      })
-
-      column++
-    }
-    rowArray.forEach((row) => {
-      const rowSummary = processEntryRow(row)
-      if (rowSummary) {
-        row.unshift({
-          special: "comment",
-          output: rowSummary,
-          name: "",
-          code: 0,
-        })
-      }
-    })
-  }
-
-  // Convert modifier maps to lean, i.e flattening the table into
-  // an array of key entries. Newlines are added between non-empty rows.
-  const leanModifierMaps: LeanModifierMapSet = {
-    base: [],
-    option: [],
-    shift: [],
-    shiftOption: [],
-  }
-
-  Object.entries(modifierMaps).forEach(
-    ([modifierName, table]: [string, KeyMapEntry[][]]) => {
-      const leanTable =
-        leanModifierMaps[modifierName as keyof LeanModifierMapSet]
-      table.forEach((row) => {
-        leanTable.push(...row)
-        if (
-          leanTable.length > 0 &&
-          leanTable.slice(-1)[0]?.special !== "lineBreak"
-        ) {
-          leanTable.push(LINE_BREAK_ENTRY)
-        }
-      })
-      if (leanTable.slice(-1)[0]?.special === "lineBreak") {
-        leanTable.pop()
-      }
-    },
-  )
-
   // Generate the XML sections
-  const keyboardId = keyboard.name.replace(/[^a-zA-Z0-9]/g, "")
-
   const xmlHeader = `<?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE keyboard PUBLIC "" "file://localhost/System/Library/DTDs/KeyboardLayout.dtd">`
 
-  const xmlKbName = escapeXml(keyboard.longName).replace(/'/g, "&#39;")
-  const xmlKeyboardStart = `<keyboard group="126" id="${keyboardId}" name="${xmlKbName}" maxout="1">`
+  const xmlKbName = keyboard.defaultedName
+  const xmlKeyboardStart = `<keyboard group="126" id="-1" name="${xmlKbName}" maxout="1">`
   const xmlKeyboardEnd = `</keyboard>`
 
   const xmlLayouts = `  <layouts>
@@ -216,52 +51,55 @@ export function MacOSConfiguration(props: MacOSConfigurationProps) {
     </keyMapSelect>
   </modifierMap>`
 
-  // Generate all key maps using Object.fromEntries
-  const xmlKeyMapSet = Object.fromEntries(
-    Object.entries(leanModifierMaps).map(
-      ([modifierName, entries]: [string, KeyMapEntry[]]) => [
-        modifierName,
-        [
-          "      <!-- Space, Enter, Tab, Backspace, Escape -->",
-          '      <key code="49" output=" "/>',
-          '      <key code="36" output="&#x000D;"/>',
-          '      <key code="48" output="&#x0009;"/>',
-          '      <key code="51" output="&#x0008;"/>',
-          '      <key code="53" output="&#x001B;"/>',
-          "",
-          ...entries.map(
-            ({ code, output, special }: KeyMapEntry) =>
-              ({
-                comment: `      <!-- ${output} -->`,
-                undefined: `      <key code="${code}" output="${output}"/>`,
-                lineBreak: "",
-              })[String(special)],
-          ),
-        ].join("\n"),
-      ],
-    ),
-  )
+  const xmlKeyMapLevelList: string[] = [0, 1, 2, 3].map((mapIndex) => {
+    return characterTable
+      .map((row, rowIndex) => {
+        const charList: string[] = []
+        const lineList = row
+          .map((column, columnIndex) => {
+            const code = getMacOSKeyCode(
+              { row: rowIndex, column: columnIndex },
+              keyboard.kind === "Basic" ? keyboard.hasLSGT : "noLSGT",
+            )
+            const char = column[mapIndex]
+            if (!code || !char) {
+              return null
+            }
+            charList.push(char)
+            return `      <key code="${code}" output="${escapeXML(char)}"/>`
+          })
+          .filter(Boolean)
+        lineList.unshift(`      <!-- ${charList.join(", ")} -->`)
+        return lineList.join("\n")
+      })
+      .filter(Boolean)
+      .join("\n\n")
+  })
+
+  const getKeyMapText = (index: number): string => {
+    return `<keyMap index="${index}">
+      <key code="49" output=" "/>       <!-- Space -->
+      <key code="36" output="&#x000A;"/><!-- Enter -->
+      <key code="51" output="&#x0008;"/><!-- Backspace -->
+      <key code="48" output="&#x0009;"/><!-- Tab -->
+      <key code="53" output="&#x001B;"/><!-- Escape -->
+
+${xmlKeyMapLevelList[index]}
+    </keyMap>`
+  }
 
   const xmlKeyMaps = `  <keyMapSet id="ANSI">
     <!-- Base keymap (no modifiers) -->
-    <keyMap index="0">
-${xmlKeyMapSet.base}
-    </keyMap>
+    ${getKeyMapText(0)}
 
     <!-- Shift keymap -->
-    <keyMap index="1">
-${xmlKeyMapSet.shift}
-    </keyMap>
+    ${getKeyMapText(1)}
 
     <!-- Option keymap -->
-    <keyMap index="2">
-${xmlKeyMapSet.option}
-    </keyMap>
+    ${getKeyMapText(2)}
 
     <!-- Shift+Option keymap -->
-    <keyMap index="3">
-${xmlKeyMapSet.shiftOption}
-    </keyMap>
+    ${getKeyMapText(3)}
   </keyMapSet>`
 
   const xmlKeyboardConfig = [
@@ -283,7 +121,7 @@ ${xmlKeyMapSet.shiftOption}
       <p>Installation Instructions:</p>
       <ol>
         <li>
-          Save this file as "<code>{keyboardId}.keylayout</code>"
+          Save this file as "<code>{keyboard.defaultedName}.keylayout</code>"
         </li>
         <li>
           Copy to <code>~/Library/Keyboard Layouts/</code> (for current user)
@@ -296,9 +134,7 @@ ${xmlKeyMapSet.shiftOption}
       </ol>
 
       <p>
-        <strong>Note:</strong> The group ID (126) is for custom layouts. Virtual
-        key codes are mapped from the original X11 layout to macOS virtual key
-        codes.
+        <strong>Note:</strong> The group ID (126) is for custom layouts.
       </p>
     </ConfigurationTemplate>
   )
