@@ -62,7 +62,7 @@ export function MacOSConfiguration(props: MacOSConfigurationProps) {
               keyboard.kind === "Basic" ? keyboard.hasLSGT : "noLSGT",
             )
             const char = column[mapIndex]
-            if (!code || !char) {
+            if (code === null || !char) {
               return null
             }
             charList.push(char)
