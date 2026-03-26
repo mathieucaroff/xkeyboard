@@ -12,9 +12,25 @@ export function WindowsConfiguration(props: WindowsConfigurationProp) {
 
   let contentTable: string[] = []
 
-  const keyMap: { sc: string; vk: string }[][] = baseKeyMap.map((row) =>
-    row.slice(),
-  )
+  /** Work item used during phased VK assignment before rendering output rows. */
+  interface KeyAssignment {
+    /** Hardware scan code used in the KLC output. */
+    sc: string
+    /** VK naturally associated with this physical key position. */
+    positionVk: string
+    /** Character outputs for shift states [0, 1, 6, 7]. */
+    group: string[]
+    /** Row index in the keyboard matrix, used for ordering. */
+    rowIndex: number
+    /** Column index in the keyboard matrix, used for ordering. */
+    columnIndex: number
+    /** Final VK selected by the phased assignment logic. */
+    assignedVk?: string
+  }
+
+  const keyMap: { sc: string; vk: string }[][] = baseKeyMap.map((row) => [
+    ...row,
+  ])
   if (keyboard.hasLSGT === "LSGT") {
     keyMap[3] = [{ sc: "56", vk: "OEM_102" }, ...keyMap[3]!]
   }
@@ -30,30 +46,64 @@ export function WindowsConfiguration(props: WindowsConfigurationProp) {
     if (!symbol) {
       return "-1"
     }
-    if (symbol === " ") {
-      return "0020"
+    if (symbol.match(/^[0-9A-Za-z]$/)) {
+      return symbol
     }
-    return symbol
+    return symbol.codePointAt(0)!.toString(16).padStart(4, "0")
   }
 
   const formatCommentName = (symbol?: string) => {
     return symbol ? formatUnicodeName(symbol) : "<none>"
   }
 
-  const deriveVk = (group: string[], fallbackVk: string) => {
-    let resultVk = fallbackVk
-    const candidates = [group[0], group[1]].filter(Boolean) as string[]
-    const digit = candidates.find((c) => /^[0-9]$/.test(c))
-    if (digit) {
-      resultVk = digit
+  const isAlphaNumeric = (value?: string) =>
+    Boolean(value?.match(/^[0-9A-Za-z]$/))
+  const isOemVk = (value: string) => value.startsWith("OEM_")
+  const formatVk = (value: string) => value + (value.length < 8 ? "\t" : "")
+
+  // Phase A: derive VK from unshifted first, otherwise shifted, when alphanumeric.
+  const deriveInitialVk = (group: string[]) => {
+    if (isAlphaNumeric(group[0])) {
+      return group[0]!.toUpperCase()
     }
-    const letter = candidates.find((c) => /^[a-zA-Z]$/.test(c))
-    if (letter) {
-      resultVk = letter.toUpperCase()
+    if (isAlphaNumeric(group[1])) {
+      return group[1]!.toUpperCase()
     }
-    return resultVk + (resultVk.length < 8 ? "\t" : "")
+    return undefined
   }
 
+  const availableDigits = Array.from({ length: 10 }, (_, index) =>
+    index.toString(),
+  )
+  const availableLetters = Array.from({ length: 26 }, (_, index) =>
+    String.fromCharCode(65 + index),
+  )
+  const fallbackOemVks = [
+    ...Array.from({ length: 7 }, (_, index) => `OEM_${index + 1}`),
+    "OEM_102",
+    "OEM_MINUS",
+    "OEM_PLUS",
+    "OEM_COMMA",
+    "OEM_PERIOD",
+  ]
+
+  // `usedVks` is global uniqueness tracking across digit/letter/OEM assignments.
+  const keyAssignments: KeyAssignment[] = []
+  const usedVks = new Set<string>()
+
+  const claimVk = (vk?: string) => {
+    if (!vk || usedVks.has(vk)) {
+      return false
+    }
+    usedVks.add(vk)
+    return true
+  }
+
+  const findFirstUnclaimed = (candidates: string[]) => {
+    return candidates.find((candidate) => !usedVks.has(candidate))
+  }
+
+  // Collect keys in row-major order so collision handling matches the spec.
   characterTable.forEach((row, rowIndex) => {
     const rowMap = keyMap[rowIndex]
     if (!rowMap) {
@@ -62,25 +112,119 @@ export function WindowsConfiguration(props: WindowsConfigurationProp) {
     row.forEach((group, columnIndex) => {
       const key = rowMap[columnIndex]
       if (!key) {
+        console.warn(
+          `No key mapping found for scancode ${rowIndex.toString(16)} column ${columnIndex}`,
+        )
         return
       }
 
-      const [c0, c1, c6, c7] = group.map((c) => c || "")
+      const [c0, c1, c6, c7] = group
 
       if (!c0 && !c1 && !c6 && !c7) {
         return
       }
 
-      const vk = deriveVk(group, key.vk)
-      const cap = c0 === " " ? "0" : c6 || c7 ? "5" : "1"
-
-      const characters = [c0, c1, c6, c7].map(formatOutputValue).join(", ")
-      const comment = [c0, c1, c6, c7].map(formatCommentName).join(", ")
-
-      contentTable.push(
-        `${key.sc}\t${vk}\t${cap}\t${characters}\t\t// ${comment}`,
-      )
+      keyAssignments.push({
+        sc: key.sc,
+        positionVk: key.vk,
+        group,
+        rowIndex,
+        columnIndex,
+      })
     })
+  })
+
+  // Phase A+B: assign derived alphanumeric VKs, resolving collisions via 0-9 then A-Z.
+  keyAssignments.forEach((assignment) => {
+    const initialVk = deriveInitialVk(assignment.group)
+    if (!initialVk) {
+      return
+    }
+
+    if (claimVk(initialVk)) {
+      assignment.assignedVk = initialVk
+      return
+    }
+
+    const replacementVk = findFirstUnclaimed([
+      ...availableDigits,
+      ...availableLetters,
+    ])
+    if (!replacementVk) {
+      return
+    }
+
+    claimVk(replacementVk)
+    assignment.assignedVk = replacementVk
+  })
+
+  // Phase C: for still-unassigned keys, use their positional OEM VK when available.
+  keyAssignments.forEach((assignment) => {
+    if (assignment.assignedVk) {
+      return
+    }
+    if (!isOemVk(assignment.positionVk)) {
+      return
+    }
+    if (!claimVk(assignment.positionVk)) {
+      return
+    }
+    assignment.assignedVk = assignment.positionVk
+  })
+
+  // Phase D: assign from fallback OEM pool, then any remaining 0-9/A-Z VKs.
+  keyAssignments.forEach((assignment) => {
+    if (assignment.assignedVk) {
+      return
+    }
+
+    const fallbackVk = findFirstUnclaimed([
+      ...fallbackOemVks,
+      ...availableDigits,
+      ...availableLetters,
+    ])
+    if (!fallbackVk) {
+      return
+    }
+
+    claimVk(fallbackVk)
+    assignment.assignedVk = fallbackVk
+  })
+
+  // Phase E: unassignable keys are omitted from output and reported to the console.
+  const droppedAssignments = keyAssignments.filter(
+    (assignment) => !assignment.assignedVk,
+  )
+  if (droppedAssignments.length > 0) {
+    console.warn(
+      `Windows configuration dropped ${droppedAssignments.length} key(s) without an available VK: ${droppedAssignments
+        .map(
+          ({ sc, rowIndex, columnIndex }) =>
+            `${sc} (row ${rowIndex}, column ${columnIndex})`,
+        )
+        .join(", ")}`,
+    )
+  }
+
+  // Emit only keys that ended up with a VK.
+  keyAssignments.forEach((assignment) => {
+    if (!assignment.assignedVk) {
+      return
+    }
+
+    const [c0, c1, c6, c7] = assignment.group
+
+    // Cap value 5 means the KLC row exposes all shift states (0, 1, 6, 7).
+    // XKeyboard does not support dead keys, so this is always correct here.
+    const cap = "5"
+
+    const characters = [c0, c1, c6, c7].map(formatOutputValue).join(" ")
+    const comment = [c0, c1, c6, c7].map(formatCommentName).join(" ")
+    const formattedVk = formatVk(assignment.assignedVk)
+
+    contentTable.push(
+      `${assignment.sc}\t${formattedVk}\t${cap}\t${characters}\t\t// ${comment}`,
+    )
   })
 
   const warning = (
@@ -91,8 +235,10 @@ export function WindowsConfiguration(props: WindowsConfigurationProp) {
     </>
   )
 
+  const kbName = keyboard.name.replaceAll(/[^A-Za-z0-9_]/g, "").slice(0, 8)
+
   const configText = `
-KBD	${keyboard.name}	"${keyboard.longName}"
+KBD	${kbName}	"${keyboard.longName}"
 
 COPYRIGHT	"(c) 2026 Your Name Here"
 
@@ -113,8 +259,8 @@ SHIFTSTATE
 
 LAYOUT		;an extra '@' at the end is a dead key
 
-//SC	VK_		Cap	0	1	2	6	7
-//--	----		----	----	----	----	----	----
+//SC	VK_		Cap	0	1	6	7
+//--	---		---	---	---	---	---
 
 ${contentTable.join("\n")}
 
