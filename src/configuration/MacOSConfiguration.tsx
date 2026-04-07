@@ -51,6 +51,35 @@ export function MacOSConfiguration(props: MacOSConfigurationProps) {
     </keyMapSelect>
   </modifierMap>`
 
+  const staticKeySet = `
+      <!-- static-keys -->
+      <!-- Space, Return, Keypad Enter, Backspace, Tab, Escape -->
+      <key code="49" output=" "/>
+      <key code="36" output="&#x000D;"/>
+      <key code="76" output="&#x0003;"/>
+      <key code="51" output="&#x0008;"/>
+      <key code="48" output="&#x0009;"/>
+      <key code="53" output="&#x001B;"/>
+      <!-- Keypad Decimal, Multiply, Plus, Divide, Minus, Equals -->
+      <key code="65" output="."/>
+      <key code="67" output="*"/>
+      <key code="69" output="+"/>
+      <key code="75" output="/"/>
+      <key code="78" output="-"/>
+      <key code="81" output="="/>
+      <!-- Keypad 0-9 -->
+      <key code="82" output="0"/>
+      <key code="83" output="1"/>
+      <key code="84" output="2"/>
+      <key code="85" output="3"/>
+      <key code="86" output="4"/>
+      <key code="87" output="5"/>
+      <key code="88" output="6"/>
+      <key code="89" output="7"/>
+      <key code="91" output="8"/>
+      <key code="92" output="9"/>
+      <!-- /static-keys -->`
+
   const xmlKeyMapLevelList: string[] = [0, 1, 2, 3].map((mapIndex) => {
     return characterTable
       .map((row, rowIndex) => {
@@ -62,8 +91,12 @@ export function MacOSConfiguration(props: MacOSConfigurationProps) {
               keyboard.kind === "Basic" ? keyboard.hasLSGT : "noLSGT",
             )
             const char = column[mapIndex]
-            if (code === null || !char) {
+            if (code === null) {
               return null
+            }
+            if (!char) {
+              charList.push(".")
+              return `      <!-- (code ${code}) -->`
             }
             charList.push(char)
             return `      <key code="${code}" output="${escapeXML(char)}"/>`
@@ -77,12 +110,7 @@ export function MacOSConfiguration(props: MacOSConfigurationProps) {
   })
 
   const getKeyMapText = (index: number): string => {
-    return `<keyMap index="${index}">
-      <key code="49" output=" "/>       <!-- Space -->
-      <key code="36" output="&#x000A;"/><!-- Enter -->
-      <key code="51" output="&#x0008;"/><!-- Backspace -->
-      <key code="48" output="&#x0009;"/><!-- Tab -->
-      <key code="53" output="&#x001B;"/><!-- Escape -->
+    return `<keyMap index="${index}">${staticKeySet}
 
 ${xmlKeyMapLevelList[index]}
     </keyMap>`
