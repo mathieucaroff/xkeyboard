@@ -235,10 +235,13 @@ export function WindowsConfiguration(props: WindowsConfigurationProp) {
     </>
   )
 
-  const kbName = keyboard.name.replaceAll(/[^A-Za-z0-9_]/g, "").slice(0, 8)
+  const truncated = (str: string, maxLength: number) =>
+    str.slice(0, maxLength).trim()
+  const kbName = truncated(keyboard.name.replaceAll(/[^A-Za-z0-9_]/g, ""), 8)
+  const kbLongName = truncated(keyboard.longName.replaceAll(/"/g, '""'), 8)
 
   const configText = `
-KBD	${kbName}	"${keyboard.longName}"
+KBD	${kbName}	"${kbLongName}"
 
 COPYRIGHT	"(c) 2026 Your Name Here"
 
