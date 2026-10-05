@@ -1,6 +1,5 @@
 import { ConfigurationTemplate } from "../components/ConfigurationTemplate"
-import { getUnicodeName } from "../symbol/symbolTable"
-import { baseKeyMap } from "../symbol/windowsKeyMap"
+import { baseKeyMap, getUnicodeName } from "./WindowsTable"
 
 export interface WindowsConfigurationProp {
   keyboard: Keyboard

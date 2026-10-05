@@ -1,50 +1,41 @@
 import { ConfigurationTemplate } from "../components/ConfigurationTemplate"
-import { getKeyName } from "../getKeyName"
-import { getSymbolName } from "../symbol/symbolTable"
+import { getKeyName, getSymbolName } from "./LinuxX11Table"
 
-function trimEmptyStringsFromArrayEnd(array: string[]) {
-  while (array[array.length - 1] === "") {
-    array.pop()
-  }
-}
-
-export interface XConfigurationProp {
+export interface LinuxX11ConfigurationProps {
   keyboard: Keyboard
 }
 
-export function LinuxConfiguration(props: XConfigurationProp) {
+export function LinuxX11Configuration(props: LinuxX11ConfigurationProps) {
   let { keyboard } = props
   let { characterTable } = keyboard.layout
 
   let configurationLineArray: string[] = []
-  Array.from({ length: 5 }, (_, row) => {
-    if (row >= characterTable.length) {
-      return
-    }
-    let position = { row, column: 0 }
-    let characterGroup = characterTable[row]![position.column] ?? []
-    trimEmptyStringsFromArrayEnd(characterGroup)
-    while (characterGroup.length > 0) {
+  characterTable.slice(0, 5).forEach((row, rowIndex) => {
+    row.forEach((group, column) => {
+      const characterGroup = [...group]
+      while (characterGroup.at(-1) === "") {
+        characterGroup.pop()
+      }
+      if (characterGroup.length === 0) {
+        return
+      }
       let keyName = getKeyName(
-        position,
+        { row: rowIndex, column },
         keyboard.kind === "Basic" ? keyboard.hasLSGT : "noLSGT",
       )
-      let line = `  key <${keyName}> { [ ${characterGroup.map((character) => getSymbolName(character)).join(", ")} ] };`
+      let line = `  key <${keyName}> { [ ${characterGroup.map((character) => getSymbolName(character) || "NoSymbol").join(", ")} ] };`
       if (
         characterGroup.some(
-          (c) =>
-            (c < "0" || c > "9") &&
-            (c < "A" || c > "Z") &&
-            (c < "a" || c > "z"),
+          (character) =>
+            (character < "0" || character > "9") &&
+            (character < "A" || character > "Z") &&
+            (character < "a" || character > "z"),
         )
       ) {
         line += ` // ${characterGroup.join(" ")}`
       }
       configurationLineArray.push(line)
-      position.column++
-      characterGroup = characterTable[row]![position.column] ?? []
-      trimEmptyStringsFromArrayEnd(characterGroup)
-    }
+    })
     configurationLineArray.push("")
   })
 

@@ -3,8 +3,8 @@
     // Target and Module Settings
     "target": "ES2020",
     "module": "ESNext",
-    "moduleResolution": "node",
     "lib": ["ESNext", "DOM", "DOM.Iterable"],
+    "types": ["bun"],
 
     // JSX Settings for React
     "jsx": "react-jsx",
@@ -36,23 +36,8 @@
     "allowJs": false,
     "declaration": false,
     "declarationMap": false,
-    "sourceMap": true,
+    "sourceMap": true
   },
-  "include": [
-    "src/**/*"
-  ],
-  "exclude": [
-    "node_modules",
-    "dist",
-    "build",
-    "**/*.test.ts",
-    "**/*.test.tsx",
-    "**/*.spec.ts",
-    "**/*.spec.tsx"
-  ],
-  "ts-node": {
-    "compilerOptions": {
-      "module": "CommonJS"
-    }
-  }
+  "include": ["src/**/*"],
+  "exclude": ["node_modules", "dist", "build"]
 }

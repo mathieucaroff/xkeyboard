@@ -1,3 +1,5 @@
+import unicodeData from "../../asset/symbols/UnicodeData17.txt?raw"
+
 type KeyMapEntry = { sc: string; vk: string }
 
 export const baseKeyMap: KeyMapEntry[][] = (() => {
@@ -70,11 +72,24 @@ export const baseKeyMap: KeyMapEntry[][] = (() => {
   })
   if (duplicates.length > 0) {
     throw new Error(
-      `Duplicate VK entries in baseKeyMap: ${[...new Set(duplicates)].join(
-        ", ",
-      )}`,
+      `Duplicate VK entries in baseKeyMap: ${[...new Set(duplicates)].join(", ")}`,
     )
   }
-
   return map
 })()
+
+const unicodeNameTable: string[] = []
+
+unicodeData.split("\n").forEach((line) => {
+  const [hexCode, name] = line.split(";")
+  const code = Number("0x" + hexCode)
+  unicodeNameTable[code] = name!
+})
+
+export function getUnicodeName(symbol: string) {
+  if (!symbol) {
+    return ""
+  }
+  let code = symbol.codePointAt(0) ?? ".".charCodeAt(0)
+  return unicodeNameTable[code] ?? `U${code.toString(16)}`
+}

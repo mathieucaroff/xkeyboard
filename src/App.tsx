@@ -3,7 +3,8 @@ import { useEffect, useState } from "react"
 import { HelpTooltip } from "./components/HelpTooltip"
 import { KeyboardView } from "./components/KeyboardView"
 import { LayoutSelector } from "./components/LayoutSelector"
-import { LinuxConfiguration } from "./configuration/LinuxConfiguration"
+import { LinuxLoadkeysConfiguration } from "./configuration/LinuxLoadkeysConfiguration"
+import { LinuxX11Configuration } from "./configuration/LinuxX11Configuration"
 import { MacOSConfiguration } from "./configuration/MacOSConfiguration"
 import { WindowsConfiguration } from "./configuration/WindowsConfiguration"
 import { MoonIcon, SunIcon } from "./icon/ThemeIcons"
@@ -72,11 +73,23 @@ function loadStoredConfig() {
 
 export function App() {
   const { defaultAlgorithm, darkAlgorithm } = theme
-  const configurationOs = ["Linux", "MacOS", "Windows"] as const
+  const configurationOs = [
+    "LinuxX11",
+    "LinuxLoadkeys",
+    "MacOS",
+    "Windows",
+  ] as const
   const configurationComponents = {
-    Linux: LinuxConfiguration,
+    LinuxX11: LinuxX11Configuration,
+    LinuxLoadkeys: LinuxLoadkeysConfiguration,
     MacOS: MacOSConfiguration,
     Windows: WindowsConfiguration,
+  }
+  const configurationLabels = {
+    LinuxX11: "Linux X11 / Wayland",
+    LinuxLoadkeys: "Linux loadkeys",
+    MacOS: "MacOS",
+    Windows: "Windows",
   }
   const [storedConfig] = useState(() => loadStoredConfig())
   let [isDarkMode, setIsDarkMode] = useState(() =>
@@ -85,6 +98,9 @@ export function App() {
   let [activeConfigTab, setActiveConfigTab] = useState(() =>
     ignoreErrors(() => {
       let stored = localStorage.getItem(tabStorageKey)
+      if (stored === "Linux") {
+        return "LinuxX11"
+      }
       if (
         stored &&
         configurationOs.includes(stored as (typeof configurationOs)[number])
@@ -131,7 +147,11 @@ export function App() {
 
   let configurationTabs = configurationOs.map((os) => {
     let Component = configurationComponents[os]
-    return { key: os, label: os, children: <Component keyboard={keyboard} /> }
+    return {
+      key: os,
+      label: configurationLabels[os],
+      children: <Component keyboard={keyboard} />,
+    }
   })
 
   useEffect(() => {

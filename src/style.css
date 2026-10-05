@@ -1,143 +1,119 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss";
 
-@layer base {
-  @font-face {
-    font-family: "RobotoFont";
-    src: url("../asset/typeface/Roboto.ttf") format("truetype");
-  }
-
-  @font-face {
-    font-family: "PrismaFont";
-    src: url("../asset/typeface/Prisma.ttf") format("truetype");
-  }
-
-  html {
-    --foreground-color: #000;
-    --background-color: #fff;
-    --surface-color: #f6f6f6;
-    --border-color: #1b1b1b;
-    --muted-color: #b5b5b5;
-    --link-color: #1d4ed8;
-    --link-hover-color: #1e40af;
-    color-scheme: light;
-
-    /* light-dark theme common properties */
-    --primary-color: #fa8c16;
-    font-family: RobotoFont, "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
-    background-color: var(--background-color);
-    color: var(--foreground-color);
-  }
-
-  html.dark {
-    --foreground-color: #fff;
-    --background-color: #111;
-    --surface-color: #1a1a1a;
-    --border-color: #f0f0f0;
-    --muted-color: #949494;
-    --link-color: #93c5fd;
-    --link-hover-color: #bfdbfe;
-    color-scheme: dark;
-  }
-
-  h1 {
-    font-family: PrismaFont;
-    font-size: 55px;
-    font-weight: 400;
-    margin: 0;
-  }
-
-  p + p {
-    margin-top: 1em;
-  }
-
-  a {
-    color: var(--link-color);
-    text-decoration: underline;
-    text-underline-offset: 2px;
-  }
-
-  a:hover,
-  a:focus-visible {
-    color: var(--link-hover-color);
-    text-decoration: underline;
-    text-underline-offset: 2px;
-  }
+@font-face {
+  font-family: "RobotoFont";
+  src: url("../asset/typeface/Roboto.ttf") format("truetype");
 }
 
-@layer components {
-  .os-tabs .ant-tabs-tab {
-    background-color: var(--surface-color);
-    color: var(--foreground-color);
-    font-weight: 600;
-    margin-right: 8px;
-    padding: 8px 14px;
-  }
+@font-face {
+  font-family: "PrismaFont";
+  src: url("../asset/typeface/Prisma.ttf") format("truetype");
+}
 
-  .os-tabs .ant-tabs-tab-active {
-    background-color: var(--foreground-color);
-    color: var(--background-color);
-  }
+html {
+  --foreground-color: #000;
+  --background-color: #fff;
+  --surface-color: #f6f6f6;
+  --border-color: #1b1b1b;
+  --muted-color: #b5b5b5;
+  --link-color: #1d4ed8;
+  --link-hover-color: #1e40af;
+  color-scheme: light;
 
-  .os-tabs .ant-tabs-ink-bar {
-    background-color: var(--foreground-color);
-    height: 3px;
-  }
+  /* light-dark theme common properties */
+  --primary-color: #fa8c16;
+  font-family: RobotoFont, "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  background-color: var(--background-color);
+  color: var(--foreground-color);
+}
 
-  .theme-toggle-button {
-    position: absolute;
-    top: 16px;
-    right: 96px;
-    z-index: 10;
-    height: 48px;
-    width: 48px;
-    padding: 0;
-    border-radius: 9999px;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    background-color: var(--surface-color);
-    color: var(--foreground-color);
-    border: 1px solid var(--border-color);
-  }
+html.dark {
+  --foreground-color: #fff;
+  --background-color: #111;
+  --surface-color: #1a1a1a;
+  --border-color: #f0f0f0;
+  --muted-color: #949494;
+  --link-color: #93c5fd;
+  --link-hover-color: #bfdbfe;
+  color-scheme: dark;
+}
 
-  .theme-toggle-button:hover,
-  .theme-toggle-button:focus-visible {
-    background-color: var(--foreground-color);
-    color: var(--background-color);
-  }
+h1 {
+  font-family: PrismaFont;
+  font-size: 55px;
+  font-weight: 400;
+  margin: 0;
+}
 
-  .help-tooltip-button {
-    height: 22px;
-    width: 22px;
-    border-radius: 9999px;
-    border: 1px solid var(--border-color);
-    background-color: var(--surface-color);
-    color: var(--foreground-color);
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    padding: 0;
-    cursor: pointer;
-    transform: translateY(-2px);
-  }
+p + p {
+  margin-top: 1em;
+}
 
-  .help-tooltip-button--among-inputs {
-    transform: translateY(3px);
-  }
+a {
+  color: var(--link-color);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
 
-  .help-tooltip-button:hover,
-  .help-tooltip-button:focus-visible {
-    border-color: var(--primary-color);
-    color: var(--primary-color);
-  }
+a:hover,
+a:focus-visible {
+  color: var(--link-hover-color);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
 
-  .help-tooltip-icon {
-    font-weight: 700;
-    font-size: 12px;
-    line-height: 1;
-  }
+.theme-toggle-button {
+  position: absolute;
+  top: 16px;
+  right: 96px;
+  z-index: 10;
+  height: 48px;
+  width: 48px;
+  padding: 0;
+  border-radius: 9999px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background-color: var(--surface-color);
+  color: var(--foreground-color);
+  border: 1px solid var(--border-color);
+}
+
+.theme-toggle-button:hover,
+.theme-toggle-button:focus-visible {
+  background-color: var(--foreground-color);
+  color: var(--background-color);
+}
+
+.help-tooltip-button {
+  height: 22px;
+  width: 22px;
+  border-radius: 9999px;
+  border: 1px solid var(--border-color);
+  background-color: var(--surface-color);
+  color: var(--foreground-color);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  cursor: pointer;
+  transform: translateY(-2px);
+}
+
+.help-tooltip-button--among-inputs {
+  transform: translateY(3px);
+}
+
+.help-tooltip-button:hover,
+.help-tooltip-button:focus-visible {
+  border-color: var(--primary-color);
+  color: var(--primary-color);
+}
+
+.help-tooltip-icon {
+  font-weight: 700;
+  font-size: 12px;
+  line-height: 1;
 }
 
 .ant-tabs-top > .ant-tabs-nav {

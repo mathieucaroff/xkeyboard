@@ -11,6 +11,7 @@ export interface ConfigurationTemplateProps {
   fileNewline?: NewlineStyle
   fileEncoding?: TextEncoding
   keyboardConfigText: string
+  exportDisabled?: boolean
   children?: ReactNode
 }
 
@@ -27,6 +28,7 @@ export function ConfigurationTemplate(props: ConfigurationTemplateProps) {
     fileNewline = "lf",
     fileEncoding = "utf-8",
     keyboardConfigText,
+    exportDisabled = false,
     children,
   } = props
 
@@ -34,6 +36,9 @@ export function ConfigurationTemplate(props: ConfigurationTemplateProps) {
   const normalizedText = normalizeNewlines(keyboardConfigText, fileNewline)
 
   const handleCopy = async () => {
+    if (exportDisabled) {
+      return
+    }
     try {
       await navigator.clipboard.writeText(normalizedText)
     } catch {
@@ -42,6 +47,9 @@ export function ConfigurationTemplate(props: ConfigurationTemplateProps) {
   }
 
   const handleDownload = () => {
+    if (exportDisabled) {
+      return
+    }
     const blob = createTextBlob(normalizedText, fileEncoding)
     const url = URL.createObjectURL(blob)
     const link = document.createElement("a")
@@ -67,6 +75,7 @@ export function ConfigurationTemplate(props: ConfigurationTemplateProps) {
           size="large"
           className="!border !border-current"
           onClick={handleCopy}
+          disabled={exportDisabled}
         >
           Copy to clipboard
           <CopyIcon />
@@ -75,6 +84,7 @@ export function ConfigurationTemplate(props: ConfigurationTemplateProps) {
           size="large"
           className="!border !border-current"
           onClick={handleDownload}
+          disabled={exportDisabled}
         >
           Download <code className="-mb-0.5 rounded py-0.5">{filename}</code>
           <DownloadIcon />
