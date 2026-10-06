@@ -4,7 +4,6 @@
   "author": "Mathieu CAROFF <mathieu.caroff@free.fr>",
   "license": "JAM",
   "type": "module",
-  "packageManager": "bun",
   "scripts": {
     "dev": "vite",
     "build": "vite build",

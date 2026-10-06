@@ -69,8 +69,8 @@ load before the overlay; this file is not a complete standalone `KEYMAP`.
 
 ## Development
 
-Run `npm run dev` for the application, `npm run build` for a production bundle,
-and `npx tsc --noEmit` for type checking. Run `npm test` for generator tests with
-Node.js 22.18 or newer (native TypeScript stripping). On Linux, also validate
+Install dependencies with `bun install`. Run `bun run dev` for
+the application, `bun run build` for a production bundle, `bunx tsc --noEmit` for
+type checking, and `bun test` for generator tests. On Linux, also validate
 generated maps using `loadkeys --parse`; actual keyboard behavior needs a Linux
 virtual console, preferably in a disposable VM.

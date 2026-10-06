@@ -5,6 +5,16 @@ import {
   getLinuxLoadkeysSymbol,
 } from "./LinuxLoadkeysTable"
 
+function keyActions(text: string, keycode: number) {
+  const match = text.match(new RegExp(`^keycode ${keycode} = (.+)$`, "m"))
+  expect(match).not.toBeNull()
+  const actions = match![1]!.split(" ")
+  return Array.from(
+    { length: 16 },
+    (_, mapIndex) => actions[mapIndex] ?? "VoidSymbol",
+  )
+}
+
 function keyboard(
   characterTable: string[][][],
   complexity = "simple",
@@ -69,16 +79,26 @@ test("simple maps repeat plain/Shift with AltGr and remap Ctrl/Meta", () => {
     keyboard([[], [["c", "C"]]]),
   )
   expect(result.errors).toEqual([])
-  expect(result.text).toMatch(/^plain keycode 16 = \+c$/m)
-  expect(result.text).toMatch(/^shift keycode 16 = \+C$/m)
-  expect(result.text).toMatch(/^altgr keycode 16 = \+c$/m)
-  expect(result.text).toMatch(/^shift altgr keycode 16 = \+C$/m)
-  expect(result.text).toMatch(/^control keycode 16 = Control_c$/m)
-  expect(result.text).toMatch(/^control alt keycode 16 = Meta_Control_c$/m)
-  expect(result.text).toMatch(/^shift alt keycode 16 = Meta_C$/m)
-  expect(result.text).not.toMatch(
-    /^keymaps|^include|keycode (14|15|28|57|59|102) =/m,
-  )
+  expect(result.text).toMatch(/^keymaps 0-15$/m)
+  expect(keyActions(result.text, 16)).toEqual([
+    "+c",
+    "+C",
+    "+c",
+    "+C",
+    "Control_c",
+    "Control_c",
+    "Control_c",
+    "Control_c",
+    "Meta_c",
+    "Meta_C",
+    "Meta_c",
+    "Meta_C",
+    "Meta_Control_c",
+    "Meta_Control_c",
+    "Meta_Control_c",
+    "Meta_Control_c",
+  ])
+  expect(result.text).not.toMatch(/^include|^keycode (14|15|28|57|59|102) =/m)
 })
 
 test("complex maps preserve four levels and bind right Alt in every map", () => {
@@ -86,12 +106,11 @@ test("complex maps preserve four levels and bind right Alt in every map", () => 
     keyboard([[["é", "É", "€", ""]]], "complex"),
   )
   expect(result.errors).toEqual([])
-  expect(result.text).toMatch(/^plain keycode 41 = \+U\+00E9$/m)
-  expect(result.text).toMatch(/^shift keycode 41 = \+U\+00C9$/m)
-  expect(result.text).toMatch(/^altgr keycode 41 = U\+20AC$/m)
-  expect(result.text).toMatch(/^shift altgr keycode 41 = VoidSymbol$/m)
-  expect(result.text).toMatch(/^alt keycode 41 = VoidSymbol$/m)
-  expect(result.text.match(/keycode 100 = AltGr/g)).toHaveLength(16)
+  expect(result.text).toMatch(/^keycode 41 = \+U\+00E9 \+U\+00C9 U\+20AC$/m)
+  expect(keyActions(result.text, 41).slice(3)).toEqual(
+    Array(13).fill("VoidSymbol"),
+  )
+  expect(result.text.match(/^keycode 100 = AltGr$/gm)).toHaveLength(1)
 })
 
 test("uses canonical console symbols for Ctrl punctuation and Meta controls", () => {
@@ -105,12 +124,12 @@ test("uses canonical console symbols for Ctrl punctuation and Meta controls", ()
     ]),
   )
   expect(result.errors).toEqual([])
-  expect(result.text).toMatch(/^control keycode 41 = nul$/m)
-  expect(result.text).toMatch(/^shift control keycode 41 = nul$/m)
-  expect(result.text).toMatch(/^control alt keycode 41 = Meta_nul$/m)
-  expect(result.text).toMatch(/^control keycode 2 = Escape$/m)
-  expect(result.text).toMatch(/^control keycode 3 = Delete$/m)
-  expect(result.text).toMatch(/^shift control keycode 3 = VoidSymbol$/m)
+  expect(keyActions(result.text, 41)[4]).toBe("nul")
+  expect(keyActions(result.text, 41)[5]).toBe("nul")
+  expect(keyActions(result.text, 41)[12]).toBe("Meta_nul")
+  expect(keyActions(result.text, 2)[4]).toBe("Escape")
+  expect(keyActions(result.text, 3)[4]).toBe("Delete")
+  expect(keyActions(result.text, 3)[5]).toBe("VoidSymbol")
 })
 
 test("continues past empty groups without mutating layout data", () => {
@@ -124,8 +143,32 @@ test("continues past empty groups without mutating layout data", () => {
   const result = generateLinuxLoadkeysConfiguration(input)
   expect(input).toEqual(before)
   expect(result.errors).toEqual([])
-  expect(result.text).toMatch(/^plain keycode 41 = VoidSymbol$/m)
-  expect(result.text).toMatch(/^plain keycode 2 = \+a$/m)
+  expect(result.text).toMatch(/^keycode 41 = VoidSymbol VoidSymbol$/m)
+  expect(keyActions(result.text, 2)[0]).toBe("+a")
+})
+
+test("trims only trailing empty actions and preserves middle modifier columns", () => {
+  const result = generateLinuxLoadkeysConfiguration(
+    keyboard([[["`", "~", "²", "³"]]], "complex"),
+  )
+  expect(result.errors).toEqual([])
+  expect(result.text).toMatch(
+    /^keycode 41 = grave asciitilde U\+00B2 U\+00B3 VoidSymbol VoidSymbol VoidSymbol VoidSymbol Meta_grave Meta_asciitilde$/m,
+  )
+  expect(keyActions(result.text, 41).slice(10)).toEqual(
+    Array(6).fill("VoidSymbol"),
+  )
+})
+
+test("keeps two entries to avoid single-symbol replication", () => {
+  const result = generateLinuxLoadkeysConfiguration(
+    keyboard([[["€", ""]]], "complex"),
+  )
+  expect(result.errors).toEqual([])
+  expect(result.text).toMatch(/^keycode 41 = U\+20AC VoidSymbol$/m)
+  expect(keyActions(result.text, 41).slice(1)).toEqual(
+    Array(15).fill("VoidSymbol"),
+  )
 })
 
 test("reports unsupported positions, duplicates, characters and extra levels", () => {
@@ -163,7 +206,7 @@ test("warns about Unicode Caps Lock and TypeMatrix assumptions", () => {
   const result = generateLinuxLoadkeysConfiguration(input)
   expect(result.errors).toEqual([])
   expect(result.warnings).toHaveLength(2)
-  expect(result.text).toMatch(/^plain keycode 41 = U\+0153$/m)
+  expect(result.text).toMatch(/^keycode 41 = U\+0153 U\+0152 U\+0153 U\+0152$/m)
 })
 
 test("sanitizes metadata so it cannot inject keymap directives", () => {

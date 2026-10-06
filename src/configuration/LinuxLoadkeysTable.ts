@@ -51,24 +51,7 @@ const asciiSymbols: Record<string, string> = {
   "~": "asciitilde",
 }
 
-const modifiers = [
-  "plain",
-  "shift",
-  "altgr",
-  "shift altgr",
-  "control",
-  "shift control",
-  "altgr control",
-  "shift altgr control",
-  "alt",
-  "shift alt",
-  "altgr alt",
-  "shift altgr alt",
-  "control alt",
-  "shift control alt",
-  "altgr control alt",
-  "shift altgr control alt",
-]
+const modifierMapCount = 16
 
 export interface LoadkeysConfigurationResult {
   text: string
@@ -157,6 +140,8 @@ export function generateLinuxLoadkeysConfiguration(
     "# Empty levels and unsupported Ctrl/Meta combinations produce no output.",
     "# Unicode input requires a Unicode-mode console and a suitable console font.",
     "",
+    `keymaps 0-${modifierMapCount - 1}`,
+    "",
   ]
   const assignedCodes = new Set<number>()
   const hasLSGT = keyboard.kind === "Basic" ? keyboard.hasLSGT : "noLSGT"
@@ -219,29 +204,34 @@ export function generateLinuxLoadkeysConfiguration(
           }
         }
       }
-      modifiers.forEach((modifier, mapIndex) => {
-        const level = mapIndex & 3
-        const character = characters[level]!
-        const control = Boolean(mapIndex & 4)
-        const meta = Boolean(mapIndex & 8)
-        let symbol = control ? getControlSymbol(character) : symbols[level]!
-        if (meta && symbol !== "VoidSymbol") {
-          symbol = control
-            ? `Meta_${symbol}`
-            : character.codePointAt(0)! < 0x7f
-              ? `Meta_${getLinuxLoadkeysSymbol(character)}`
-              : "VoidSymbol"
-        }
-        lines.push(`${modifier} keycode ${keycode} = ${symbol}`)
-      })
-      lines.push("")
+      const actions = Array.from(
+        { length: modifierMapCount },
+        (_, mapIndex) => {
+          const level = mapIndex & 3
+          const character = characters[level]!
+          const control = Boolean(mapIndex & 4)
+          const meta = Boolean(mapIndex & 8)
+          let symbol = control ? getControlSymbol(character) : symbols[level]!
+          if (meta && symbol !== "VoidSymbol") {
+            symbol = control
+              ? `Meta_${symbol}`
+              : character.codePointAt(0)! < 0x7f
+                ? `Meta_${getLinuxLoadkeysSymbol(character)}`
+                : "VoidSymbol"
+          }
+          return symbol
+        },
+      )
+      while (actions.length > 2 && actions.at(-1) === "VoidSymbol") {
+        actions.pop()
+      }
+      lines.push(`keycode ${keycode} = ${actions.join(" ")}`)
     })
+    lines.push("")
   })
 
   if (keyboard.layout.complexity === "complex") {
-    for (const modifier of modifiers) {
-      lines.push(`${modifier} keycode 100 = AltGr`)
-    }
+    lines.push("keycode 100 = AltGr")
     lines.push("")
   }
   if (assignedCodes.size === 0) {
