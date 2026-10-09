@@ -73,24 +73,30 @@ function loadStoredConfig() {
 
 export function App() {
   const { defaultAlgorithm, darkAlgorithm } = theme
-  const configurationOs = [
-    "LinuxX11",
-    "LinuxLoadkeys",
-    "MacOS",
-    "Windows",
+  const configurationOptions = [
+    {
+      key: "LinuxX11",
+      label: "Linux X11 / Wayland",
+      Component: LinuxX11Configuration,
+    },
+    {
+      key: "LinuxLoadkeys",
+      label: "Linux loadkeys",
+      Component: LinuxLoadkeysConfiguration,
+    },
+    {
+      key: "MacOS",
+      label: "MacOS",
+      Component: MacOSConfiguration,
+    },
+    {
+      key: "Windows",
+      label: "Windows",
+      Component: WindowsConfiguration,
+    },
   ] as const
-  const configurationComponents = {
-    LinuxX11: LinuxX11Configuration,
-    LinuxLoadkeys: LinuxLoadkeysConfiguration,
-    MacOS: MacOSConfiguration,
-    Windows: WindowsConfiguration,
-  }
-  const configurationLabels = {
-    LinuxX11: "Linux X11 / Wayland",
-    LinuxLoadkeys: "Linux loadkeys",
-    MacOS: "MacOS",
-    Windows: "Windows",
-  }
+  type ConfigurationOs = (typeof configurationOptions)[number]["key"]
+  const defaultConfigurationOs = configurationOptions[0].key
   const [storedConfig] = useState(() => loadStoredConfig())
   let [isDarkMode, setIsDarkMode] = useState(() =>
     ignoreErrors(() => localStorage.getItem(themeStorageKey) === "dark", false),
@@ -101,14 +107,11 @@ export function App() {
       if (stored === "Linux") {
         return "LinuxX11"
       }
-      if (
-        stored &&
-        configurationOs.includes(stored as (typeof configurationOs)[number])
-      ) {
-        return stored
+      if (stored && configurationOptions.some(({ key }) => key === stored)) {
+        return stored as ConfigurationOs
       }
-      return configurationOs[0]
-    }, configurationOs[0]),
+      return defaultConfigurationOs
+    }, defaultConfigurationOs),
   )
   let [keyboardName, setKeyboardName] = useState(
     () => storedConfig?.keyboardName ?? "",
@@ -145,14 +148,15 @@ export function App() {
     hasNumpad,
   }
 
-  let configurationTabs = configurationOs.map((os) => {
-    let Component = configurationComponents[os]
-    return {
-      key: os,
-      label: configurationLabels[os],
-      children: <Component keyboard={keyboard} />,
-    }
-  })
+  let configurationTabs = configurationOptions.map(
+    ({ key, label, Component }) => {
+      return {
+        key,
+        label,
+        children: <Component keyboard={keyboard} />,
+      }
+    },
+  )
 
   useEffect(() => {
     document.documentElement.classList.toggle("dark", isDarkMode)
@@ -268,7 +272,7 @@ export function App() {
         tabBarGutter={5}
         items={configurationTabs}
         activeKey={activeConfigTab}
-        onChange={setActiveConfigTab}
+        onChange={(key) => setActiveConfigTab(key as ConfigurationOs)}
       />
     </ConfigProvider>
   )

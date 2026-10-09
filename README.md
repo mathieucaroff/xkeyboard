@@ -69,6 +69,29 @@ load before the overlay; this file is not a complete standalone `KEYMAP`.
 
 ## Development
 
+### Layout presets
+
+Vite imports all `layout/**/*.txt` files as strings. Each file starts with four
+metadata lines: configuration name, display name, `simple` or `complex`, and
+`LSGT` or `noLSGT`. The remaining lines contain whitespace-separated key symbols.
+Simple layouts use groups of two lines (upper, lower); complex layouts use four
+(upper, lower, AltGr upper, AltGr lower). Blank separator lines are ignored.
+There must be one to five complete groups, with at most 14 key columns per line.
+Short modifier rows are padded with empty keys by the keyboard parser.
+
+Each symbol is a single printable Unicode scalar. `.` represents an empty key.
+Use `:` as a placeholder and append a matching `:symbol` token to the same line;
+for example, `A : ::` represents A followed by a literal colon, and `A : :.`
+represents A followed by a literal period. Backticks and backslashes are literal
+characters, not JavaScript escapes. UTF-8 BOMs and CRLF line endings are supported.
+
+Valid files appear in the layout selector using their paths relative to `layout/`
+without `.txt`. Invalid files are excluded and logged with their paths and
+validation errors in the browser console. Qwerty is the default when available;
+otherwise the first valid file is used, or the custom editor if none are valid.
+
+### Software development
+
 Install dependencies with `bun install`. Run `bun run dev` for
 the application, `bun run build` for a production bundle, `bunx tsc --noEmit` for
 type checking, and `bun test` for generator tests. On Linux, also validate

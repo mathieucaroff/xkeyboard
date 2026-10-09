@@ -1,111 +1,17 @@
 import { Checkbox, Input, Select } from "antd"
 import { Dispatch, SetStateAction, useEffect, useState } from "react"
+import { loadLayoutFiles } from "../lib/layoutFiles"
 import { HelpTooltip } from "./HelpTooltip"
 
 const layoutStorageKey = "xkeyboard-layout-editor"
 
-const QWERTY = [
-  "qwerty",
-  "Qwerty",
-  `
-~ ! @ # $ % ^ & * ( ) _ +
-\` 1 2 3 4 5 6 7 8 9 0 - =
-Q W E R T Y U I O P { } |
-q w e r t y u i o p [ ] \\
-A S D F G H J K L : " ::
-a s d f g h j k l ; '
-Z X C V B N M < > ?
-z x c v b n m , : / :.
-`.slice(1, -1),
-  "simple",
-  "noLSGT",
-] as const
-const AZERTY = [
-  "azerty_short",
-  "Azerty short",
-  `
-. 1 2 3 4 5 6 7 8 9 0 ° +
-² & é " ' ( - è _ ç à ) =
-A Z E R T Y U I O P ¨ £ µ
-a z e r t y u i o p ^ $ *
-Q S D F G H J K L M %
-q s d f g h j k l m ù
-> W X C V B N ? : / § :.
-< w x c v b n , ; : ! ::
-`.slice(1, -1),
-  "simple",
-  "LSGT",
-] as const
-const ASSET2025 = [
-  "asset2025_short",
-  "Asset 2025 short",
-  `
-~ 1 2 3 4 5 6 7 8 9 0 _ +
-\` ! @ # $ % ^ & * ( ) - =
-Q W D G J Y P U L : { } | ::
-q w d g j y p u l ; [ ] \\
-A S E T F H N I O R "
-a s e t f h n i o r '
-- Z X C V B K M < > ?
-_ z x c v b k m , : / :.
-`.slice(1, -1),
-  "simple",
-  "LSGT",
-] as const
-const AZERTYFULL = [
-  "azerty",
-  "Azerty",
-  `
-. 1 2 3 4 5 6 7 8 9 0 ° +
-² & é " ' ( - è _ ç à ) =
-.
-. . ~ # { [ | \` \\ ^ @ ] }
-
-A Z E R T Y U I O P ¨ £ µ
-a z e r t y u i o p ^ $ *
-.
-. . € . . . . . . . . ¤
-
-Q S D F G H J K L M %
-q s d f g h j k l m ù
-.
-.
-
-> W X C V B N ? : / § :.
-< w x c v b n , ; : ! ::
-.
-.
-`.slice(1, -1),
-  "complex",
-  "LSGT",
-] as const
-const ASSET2025FULL = [
-  "asset2025",
-  "Asset 2025",
-  `
-~ 1 2 3 4 5 6 7 8 9 0 _ +
-\` ! @ # $ % ^ & * ( ) - =
-³ Ä Œ Ë £ : . Ü Ï Ö . ° § :‱
-² ä œ ë £ ‰ . ü ï ö . ° ¤
-
-Q W D G J Y P U L : { } | ::
-q w d g j y p u l ; [ ] \\
-À Ñ È . . . Ù Ì Ò . . . ‽
-à ñ è . . . ù ì ò . ⟨ ⟩ ¡
-
-A S E T F H N I O R "
-a s e t f h n i o r '
-Á ß É € . ― Ú Í Ó
-á ß é € . ― ú í ó
-
-- Z X C V B K M < > ?
-_ z x c v b k m , : / :.
-— Â Ç Ê . . . Û Î Ô ⸮
-– â ç ê . . . û î ô ¿
-`.slice(1, -1),
-  "complex",
-  "LSGT",
-] as const
+const layoutPresets = loadLayoutFiles(
+  import.meta.glob<string>("/layout/**/*.txt", {
+    query: "?raw",
+    import: "default",
+    eager: true,
+  }),
+)
 
 type StoredLayoutState = {
   version: 1
@@ -256,41 +162,24 @@ export function LayoutSelector(prop: LayoutSelectorProp) {
   let [keyboardSelectValue, setKeyboardSelectValue] = useState("other")
 
   let handleKeyboardSelectValue = (value: string) => {
-    setKeyboardSelectValue(value)
+    const preset = layoutPresets.find((layout) => layout.value === value)
+    setKeyboardSelectValue(preset?.value ?? "other")
+    if (!preset) return
 
-    let selection = value.toUpperCase()
-    let [name, longName, text, complexity, keyboardHasLSGT] = ({
-      QWERTY,
-      AZERTY,
-      AZERTYFULL,
-      ASSET2025,
-      ASSET2025FULL,
-      OTHER: [
-        keyboardName,
-        keyboardLongName,
-        keyboardText,
-        keyboardComplexity,
-        keyboardKind,
-      ],
-    }[selection] ?? ["", "", "", "simple", "LSGT"]) as [
-      string,
-      string,
-      string,
-      Complexity,
-      HasLSGT,
-    ]
-    setKeyboardName(name)
-    setKeyboardLongName(longName)
-    setKeyboardComplexity(complexity)
-    if (keyboardKind === "TypeMatrix" && keyboardHasLSGT === "LSGT") {
-      text = removeLSGT(text, complexity)
-      keyboardHasLSGT = "noLSGT"
-    }
-    setHasLSGT(keyboardHasLSGT)
+    const removeExtraKey =
+      keyboardKind === "TypeMatrix" && preset.hasLSGT === "LSGT"
+    const text = removeExtraKey
+      ? removeLSGT(preset.text, preset.complexity)
+      : preset.text
+
+    setKeyboardName(preset.name)
+    setKeyboardLongName(preset.longName)
+    setKeyboardComplexity(preset.complexity)
+    setHasLSGT(removeExtraKey ? "noLSGT" : preset.hasLSGT)
     setKeyboardText(text)
     setKeyboardLayout({
-      complexity,
-      characterTable: parseKeyboardText(text, complexity),
+      complexity: preset.complexity,
+      characterTable: parseKeyboardText(text, preset.complexity),
     })
   }
 
@@ -299,7 +188,13 @@ export function LayoutSelector(prop: LayoutSelectorProp) {
     if (storedState) {
       setKeyboardText(storedState.keyboardText)
       setKeyboardComplexity(storedState.keyboardComplexity)
-      setKeyboardSelectValue(storedState.keyboardSelectValue)
+      setKeyboardSelectValue(
+        layoutPresets.some(
+          (layout) => layout.value === storedState.keyboardSelectValue,
+        )
+          ? storedState.keyboardSelectValue
+          : "other",
+      )
       setKeyboardLayout({
         complexity: storedState.keyboardComplexity,
         characterTable: parseKeyboardText(
@@ -309,7 +204,11 @@ export function LayoutSelector(prop: LayoutSelectorProp) {
       })
       return
     }
-    handleKeyboardSelectValue("Qwerty")
+    handleKeyboardSelectValue(
+      layoutPresets.find((layout) => layout.value === "Qwerty")?.value ??
+        layoutPresets[0]?.value ??
+        "other",
+    )
   }, [])
 
   useEffect(() => {
@@ -336,11 +235,7 @@ export function LayoutSelector(prop: LayoutSelectorProp) {
           className="w-[150px]"
           options={[
             { value: "other" },
-            { value: "Qwerty" },
-            { value: "Azerty" },
-            { value: "AzertyFull" },
-            { value: "Asset2025" },
-            { value: "Asset2025Full" },
+            ...layoutPresets.map((layout) => ({ value: layout.value })),
           ]}
         />
         <Select
