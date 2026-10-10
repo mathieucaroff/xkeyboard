@@ -3,6 +3,7 @@ import { useEffect, useState } from "react"
 import { HelpTooltip } from "./components/HelpTooltip"
 import { KeyboardView } from "./components/KeyboardView"
 import { LayoutSelector } from "./components/LayoutSelector"
+import { AndroidKcmConfiguration } from "./configuration/AndroidKcmConfiguration"
 import { LinuxLoadkeysConfiguration } from "./configuration/LinuxLoadkeysConfiguration"
 import { LinuxX11Configuration } from "./configuration/LinuxX11Configuration"
 import { MacOSConfiguration } from "./configuration/MacOSConfiguration"
@@ -93,6 +94,11 @@ export function App() {
       key: "Windows",
       label: "Windows",
       Component: WindowsConfiguration,
+    },
+    {
+      key: "AndroidKcm",
+      label: "Android KCM",
+      Component: AndroidKcmConfiguration,
     },
   ] as const
   type ConfigurationOs = (typeof configurationOptions)[number]["key"]
